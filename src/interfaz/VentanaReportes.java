@@ -46,7 +46,7 @@ public class VentanaReportes extends javax.swing.JFrame {
         pnlEstados = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblEstados = new javax.swing.JTable();
-        pnlMapa = new javax.swing.JPanel();
+        pnlMapa = new PanelMapa();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -441,34 +441,11 @@ private void clickCeldaEstados(java.awt.event.MouseEvent evt) {
 
 private void configurarMapa() {
     pnlMapa.setLayout(null);
-    pnlMapa.setOpaque(true);
 
     agregarEtiquetaZona("NORTE", 120, 30, pnlMapa);
     agregarEtiquetaZona("OESTE", 50, 180, pnlMapa);
     agregarEtiquetaZona("ESTE", 210, 180, pnlMapa);
     agregarEtiquetaZona("SUR", 130, 310, pnlMapa);
-
-    java.net.URL imgUrl = getClass().getResource("/recursos/mapa_uruguay.png");
-
-    if (imgUrl != null) {
-        java.awt.Image imgOriginal = java.awt.Toolkit.getDefaultToolkit().getImage(imgUrl);
-        java.awt.MediaTracker tracker = new java.awt.MediaTracker(pnlMapa);
-        tracker.addImage(imgOriginal, 0);
-        try {
-            tracker.waitForAll();
-        } catch (InterruptedException e) {
-            System.out.println("Error cargando imagen: " + e.getMessage());
-        }
-
-        java.awt.Image imgEscalada = imgOriginal.getScaledInstance(300, 400, java.awt.Image.SCALE_SMOOTH);
-        JLabel fondo = new JLabel(new javax.swing.ImageIcon(imgEscalada));
-        fondo.setBounds(0, 0, 300, 400);
-        pnlMapa.add(fondo, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        pnlMapa.setComponentZOrder(fondo, pnlMapa.getComponentCount() - 1);
-    }
-
-    pnlMapa.revalidate();
-    pnlMapa.repaint();
 }
 
 private void agregarEtiquetaZona(String zona, int x, int y, javax.swing.JPanel panel) {

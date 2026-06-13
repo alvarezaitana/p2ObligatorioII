@@ -320,6 +320,9 @@
                   <Dimension value="[300, 400]"/>
                 </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new PanelMapa()"/>
+              </AuxValues>
 
               <Layout>
                 <DimensionLayout dim="0">
