@@ -44,6 +44,9 @@ public class VentanaReportes extends javax.swing.JFrame {
         txtLog = new javax.swing.JTextArea();
         btnBorrarLog = new javax.swing.JButton();
         pnlEstados = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tblEstados = new javax.swing.JTable();
+        pnlMapa = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -95,7 +98,7 @@ public class VentanaReportes extends javax.swing.JFrame {
                         .addComponent(lblPendientes)
                         .addGap(57, 57, 57)
                         .addComponent(lblPendientesRes)))
-                .addContainerGap(126, Short.MAX_VALUE))
+                .addContainerGap(246, Short.MAX_VALUE))
         );
         pnlClienteLayout.setVerticalGroup(
             pnlClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -119,7 +122,7 @@ public class VentanaReportes extends javax.swing.JFrame {
                             .addComponent(lblTotal)
                             .addComponent(lblTotalRes)))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(123, Short.MAX_VALUE))
+                .addContainerGap(204, Short.MAX_VALUE))
         );
 
         pnelReportes.addTab("Consulta por Cliente", pnlCliente);
@@ -142,36 +145,73 @@ public class VentanaReportes extends javax.swing.JFrame {
             .addGroup(pnlLogTransaccionesLayout.createSequentialGroup()
                 .addGap(207, 207, 207)
                 .addComponent(btnBorrarLog)
-                .addContainerGap(242, Short.MAX_VALUE))
+                .addContainerGap(362, Short.MAX_VALUE))
             .addGroup(pnlLogTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pnlLogTransaccionesLayout.createSequentialGroup()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         pnlLogTransaccionesLayout.setVerticalGroup(
             pnlLogTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLogTransaccionesLayout.createSequentialGroup()
-                .addContainerGap(296, Short.MAX_VALUE)
+                .addContainerGap(377, Short.MAX_VALUE)
                 .addComponent(btnBorrarLog)
                 .addGap(40, 40, 40))
             .addGroup(pnlLogTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pnlLogTransaccionesLayout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(89, Short.MAX_VALUE)))
+                    .addContainerGap(170, Short.MAX_VALUE)))
         );
 
         pnelReportes.addTab("Log de Transacciones", pnlLogTransacciones);
+
+        tblEstados.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(tblEstados);
+
+        pnlMapa.setMinimumSize(new java.awt.Dimension(300, 400));
+        pnlMapa.setPreferredSize(new java.awt.Dimension(300, 400));
+
+        javax.swing.GroupLayout pnlMapaLayout = new javax.swing.GroupLayout(pnlMapa);
+        pnlMapa.setLayout(pnlMapaLayout);
+        pnlMapaLayout.setHorizontalGroup(
+            pnlMapaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+        pnlMapaLayout.setVerticalGroup(
+            pnlMapaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout pnlEstadosLayout = new javax.swing.GroupLayout(pnlEstados);
         pnlEstados.setLayout(pnlEstadosLayout);
         pnlEstadosLayout.setHorizontalGroup(
             pnlEstadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 534, Short.MAX_VALUE)
+            .addGroup(pnlEstadosLayout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pnlMapa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(105, Short.MAX_VALUE))
         );
         pnlEstadosLayout.setVerticalGroup(
             pnlEstadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 359, Short.MAX_VALUE)
+            .addGroup(pnlEstadosLayout.createSequentialGroup()
+                .addGap(132, 132, 132)
+                .addGroup(pnlEstadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlMapa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(152, Short.MAX_VALUE))
         );
 
         pnelReportes.addTab("Paquetes por estado", pnlEstados);
@@ -182,13 +222,13 @@ public class VentanaReportes extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pnelReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+                .addComponent(pnelReportes)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(pnelReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
+                .addComponent(pnelReportes)
                 .addContainerGap())
         );
 
@@ -226,6 +266,8 @@ public class VentanaReportes extends javax.swing.JFrame {
     private void cargarDatosIniciales() {
     cargarListaClientes();
     cargarLog();
+    cargarTablaEstados();
+    configurarMapa();
 }
 
 // =====================================================================
@@ -329,10 +371,127 @@ private void borrarLog() {
     }
 }
 
+private void cargarTablaEstados() {
+    String[] columnas = {"Zona", "Pendiente", "Enviado", "Recibido", "Total"};
+    String[] zonas = {"NORTE", "OESTE", "ESTE", "SUR"};
+
+    javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(columnas, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+
+    for (int i = 0; i < zonas.length; i = i + 1) {
+        String zona = zonas[i];
+        int pendientes = sistema.contarPaquetesPorZonaYEstado(zona, "pendiente");
+        int enviados = sistema.contarPaquetesPorZonaYEstado(zona, "enviado");
+        int recibidos = sistema.contarPaquetesPorZonaYEstado(zona, "recibido");
+        int total = pendientes + enviados + recibidos;
+
+        modelo.addRow(new Object[]{zona, pendientes, enviados, recibidos, total});
+    }
+
+    tblEstados.setModel(modelo);
+
+    tblEstados.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            clickCeldaEstados(evt);
+        }
+    });
+}
+
+private void clickCeldaEstados(java.awt.event.MouseEvent evt) {
+    int fila = tblEstados.getSelectedRow();
+    int columna = tblEstados.getSelectedColumn();
+
+    if (fila < 0 || columna <= 0 || columna == 4) {
+        return;
+    }
+
+    String[] zonas = {"NORTE", "OESTE", "ESTE", "SUR"};
+    String[] estados = {"pendiente", "enviado", "recibido"};
+
+    String zona = zonas[fila];
+    String estado = estados[columna - 1];
+
+    int cantClientes = sistema.contarClientesDistintosPorZonaYEstado(zona, estado);
+    ArrayList<String> departamentos = sistema.darDepartamentosConPaquetes(zona, estado);
+
+    String textoDeps = "";
+    if (departamentos.isEmpty()) {
+        textoDeps = "Ninguno";
+    } else {
+        for (int i = 0; i < departamentos.size(); i = i + 1) {
+            if (i > 0) {
+                textoDeps = textoDeps + ", ";
+            }
+            textoDeps = textoDeps + departamentos.get(i);
+        }
+    }
+
+    JOptionPane.showMessageDialog(this,
+            "Zona: " + zona + " — Estado: " + estado.toUpperCase() + "\n\n"
+            + "Clientes distintos: " + cantClientes + "\n"
+            + "Departamentos: " + textoDeps,
+            "Detalle de celda",
+            JOptionPane.INFORMATION_MESSAGE);
+}
+
+private void configurarMapa() {
+    pnlMapa.setLayout(null);
+    pnlMapa.setBackground(new java.awt.Color(240, 248, 255));
+
+    // Imagen de fondo
+    java.net.URL imgUrl = getClass().getResource("/mapa_uruguay.png");
+    System.out.println("URL imagen: " + imgUrl);
+    if (imgUrl != null) {
+        javax.swing.ImageIcon iconOriginal = new javax.swing.ImageIcon(imgUrl);
+        java.awt.Image imgEscalada = iconOriginal.getImage().getScaledInstance(
+        280, 370, java.awt.Image.SCALE_SMOOTH);
+        JLabel lblImagen = new JLabel(new javax.swing.ImageIcon(imgEscalada));
+        lblImagen.setBounds(0, 0, 280, 370);
+        pnlMapa.add(lblImagen);
+    }
+
+    // Etiquetas por zona
+    agregarEtiquetaZona("NORTE", 120, 30, pnlMapa);
+    agregarEtiquetaZona("OESTE", 50, 180, pnlMapa);
+    agregarEtiquetaZona("ESTE", 210, 180, pnlMapa);
+    agregarEtiquetaZona("SUR", 130, 310, pnlMapa);
+}
+
+private void agregarEtiquetaZona(String zona, int x, int y, javax.swing.JPanel panel) {
+    int pendientes = sistema.contarPaquetesPorZonaYEstado(zona, "pendiente");
+    int enviados = sistema.contarPaquetesPorZonaYEstado(zona, "enviado");
+    int recibidos = sistema.contarPaquetesPorZonaYEstado(zona, "recibido");
+
+    String tooltip = "<html><b>" + zona + "</b><br>"
+            + "Pendientes: " + pendientes + "<br>"
+            + "Enviados: " + enviados + "<br>"
+            + "Recibidos: " + recibidos + "</html>";
+
+    JLabel lbl = new JLabel(zona);
+    lbl.setBounds(x, y, 80, 25);
+    lbl.setOpaque(true);
+    lbl.setBackground(new java.awt.Color(255, 255, 180));
+    lbl.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.DARK_GRAY));
+    lbl.setHorizontalAlignment(JLabel.CENTER);
+    lbl.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 11));
+    lbl.setToolTipText(tooltip);
+
+    javax.swing.ToolTipManager.sharedInstance().setInitialDelay(0);
+
+    panel.add(lbl);
+    panel.setComponentZOrder(lbl, 0);
+}
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBorrarLog;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lblEnviados;
     private javax.swing.JLabel lblEnviadosRes;
     private javax.swing.JLabel lblPendientes;
@@ -346,6 +505,8 @@ private void borrarLog() {
     private javax.swing.JPanel pnlCliente;
     private javax.swing.JPanel pnlEstados;
     private javax.swing.JPanel pnlLogTransacciones;
+    private javax.swing.JPanel pnlMapa;
+    private javax.swing.JTable tblEstados;
     private javax.swing.JTextArea txtLog;
     // End of variables declaration//GEN-END:variables
 }
