@@ -46,7 +46,7 @@ public class VentanaReportes extends javax.swing.JFrame {
         pnlEstados = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblEstados = new javax.swing.JTable();
-        pnlMapa = new PanelMapa();
+        pnlMapa = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -179,7 +179,7 @@ public class VentanaReportes extends javax.swing.JFrame {
         ));
         jScrollPane3.setViewportView(tblEstados);
 
-        pnlMapa.setMinimumSize(new java.awt.Dimension(300, 400));
+        pnlMapa.setMinimumSize(new java.awt.Dimension(300, 350));
         pnlMapa.setPreferredSize(new java.awt.Dimension(300, 400));
 
         javax.swing.GroupLayout pnlMapaLayout = new javax.swing.GroupLayout(pnlMapa);
@@ -200,9 +200,9 @@ public class VentanaReportes extends javax.swing.JFrame {
             .addGroup(pnlEstadosLayout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(57, 57, 57)
                 .addComponent(pnlMapa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(105, Short.MAX_VALUE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         pnlEstadosLayout.setVerticalGroup(
             pnlEstadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -442,10 +442,22 @@ private void clickCeldaEstados(java.awt.event.MouseEvent evt) {
 private void configurarMapa() {
     pnlMapa.setLayout(null);
 
-    agregarEtiquetaZona("NORTE", 120, 30, pnlMapa);
-    agregarEtiquetaZona("OESTE", 50, 180, pnlMapa);
-    agregarEtiquetaZona("ESTE", 210, 180, pnlMapa);
-    agregarEtiquetaZona("SUR", 130, 310, pnlMapa);
+    // Imagen de fondo
+    java.net.URL imgUrl = getClass().getResource("/recursos/mapa_uruguay.png");
+    if (imgUrl != null) {
+        javax.swing.ImageIcon icono = new javax.swing.ImageIcon(imgUrl);
+        java.awt.Image imgEscalada = icono.getImage()
+                .getScaledInstance(300, 400, java.awt.Image.SCALE_SMOOTH);
+        JLabel lblFondo = new JLabel(new javax.swing.ImageIcon(imgEscalada));
+        lblFondo.setBounds(0, 0, 300, 400);
+        pnlMapa.add(lblFondo);
+    }
+
+    // Etiquetas de zona encima de la imagen
+    agregarEtiquetaZona("NORTE", 100, 50, pnlMapa);
+    agregarEtiquetaZona("OESTE", 40, 220, pnlMapa);
+    agregarEtiquetaZona("ESTE", 190, 220, pnlMapa);
+    agregarEtiquetaZona("SUR", 110, 290, pnlMapa);
 }
 
 private void agregarEtiquetaZona(String zona, int x, int y, javax.swing.JPanel panel) {
