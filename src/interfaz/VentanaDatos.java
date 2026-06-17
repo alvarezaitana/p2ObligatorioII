@@ -7,11 +7,12 @@ import dominio.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import archivos.ManejadorArchivos;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-public class VentanaDatos extends javax.swing.JFrame {
+public class VentanaDatos extends javax.swing.JFrame implements Observer {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaDatos.class.getName());
     private Sistema sistema;
@@ -21,6 +22,7 @@ public class VentanaDatos extends javax.swing.JFrame {
         public VentanaDatos(Sistema unSistema) {
         initComponents();
         sistema = unSistema;
+        sistema.agregarObserver(this);
         cargarDatosIniciales();
         configurarEventos();
         
@@ -187,7 +189,7 @@ public class VentanaDatos extends javax.swing.JFrame {
             boolean agregado = sistema.agregarCliente(cliente);
 
             if (agregado) {
-                sistema.registrarTransaccion("Ingreso de cliente " + nombre);  // REGISTRAR EL LOG
+                ManejadorArchivos.registrarTransaccion("Ingreso de cliente " + nombre);  // REGISTRAR EL LOG
                 JOptionPane.showMessageDialog(this, "Cliente agregado correctamente.");
                 cargarListaClientes();
                 limpiarCliente();
@@ -227,7 +229,7 @@ public class VentanaDatos extends javax.swing.JFrame {
                 boolean modificado = sistema.modificarCliente(cliente, nombre, celular, correo);
 
                 if (modificado) {
-                    sistema.registrarTransaccion("Modificación de cliente " + nombre);  // REGISTRAR LOG
+                    ManejadorArchivos.registrarTransaccion("Modificación de cliente " + nombre);  // REGISTRAR LOG
                     JOptionPane.showMessageDialog(this, "Cliente modificado correctamente.");
                     cargarListaClientes();
                     limpiarCliente();
@@ -261,7 +263,7 @@ public class VentanaDatos extends javax.swing.JFrame {
                 boolean agregado = sistema.agregarFuncionario(funcionario);
 
                 if (agregado) {
-                    sistema.registrarTransaccion("Ingreso de funcionario " + nombre);  // REGISTRAR EL LOG
+                    ManejadorArchivos.registrarTransaccion("Ingreso de funcionario " + nombre);  // REGISTRAR EL LOG
                     JOptionPane.showMessageDialog(this, "Funcionario agregado correctamente.");
                     cargarListaFuncionarios();
                     limpiarFuncionario();
@@ -310,7 +312,7 @@ public class VentanaDatos extends javax.swing.JFrame {
                     boolean modificado = sistema.modificarFuncionario(funcionario, nombre, celular, numero, anio);
 
                     if (modificado) {
-                        sistema.registrarTransaccion("Modificación de funcionario " + nombre);  // REGISTRAR LOG
+                        ManejadorArchivos.registrarTransaccion("Modificación de funcionario " + nombre);  // REGISTRAR LOG
                         JOptionPane.showMessageDialog(this, "Funcionario modificado correctamente.");
                         cargarListaFuncionarios();
                         limpiarFuncionario();
@@ -341,8 +343,8 @@ public class VentanaDatos extends javax.swing.JFrame {
                 double porcentaje = Double.parseDouble(textoPorcentaje);
 
                 sistema.actualizarTarifas(porcentaje);
-                sistema.grabarTarifasTxt();
-                sistema.registrarTransaccion("Actualización de tarifas con " + porcentaje + "%");  // REGISTRAR EL LOG
+                ManejadorArchivos.grabarTarifasTxt(sistema);
+                ManejadorArchivos.registrarTransaccion("Actualización de tarifas con " + porcentaje + "%");  // REGISTRAR EL LOG
                 cargarTablaTarifas();
 
                 txtPorcentaje.setText("");
@@ -793,4 +795,11 @@ public class VentanaDatos extends javax.swing.JFrame {
     private javax.swing.JTextField txtNumFun;
     private javax.swing.JTextField txtPorcentaje;
     // End of variables declaration//GEN-END:variables
+    
+    @Override
+    public void actualizar() {
+        cargarListaClientes();
+        cargarListaFuncionarios();
+        cargarTablaTarifas();
+    }
 }

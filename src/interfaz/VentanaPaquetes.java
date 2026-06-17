@@ -5,14 +5,21 @@
 package interfaz;
 
 import dominio.*;
-import javax.swing.*;
 import java.util.ArrayList;
+import archivos.ManejadorArchivos;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 import java.text.ParseException;
+import java.awt.Color;
+import java.awt.Component;
+import java.util.Collections;
+import java.util.Comparator;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 
-public class VentanaPaquetes extends javax.swing.JFrame {
+public class VentanaPaquetes extends javax.swing.JFrame implements Observer{
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaPaquetes.class.getName());
 
@@ -20,14 +27,18 @@ public class VentanaPaquetes extends javax.swing.JFrame {
     private ArrayList<Paquete> paquetesPendientesEnvio;
     private ArrayList<Paquete> paquetesSeleccionadosEnvio;
     private ArrayList<Funcionario> funcionariosEnvio;
+    private ArrayList<Envio> enviosRecepcion;
+private ArrayList<Paquete> paquetesRecepcion;
     
     public VentanaPaquetes(Sistema unSistema) {
         initComponents();
         sistema = unSistema;
+        sistema.agregarObserver(this);
         configurarFechaPaquete();
         cargarDatosIniciales();
         configurarEnvio();
         configurarFechaEnvio();
+        configurarRecepcion();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -293,9 +304,9 @@ public class VentanaPaquetes extends javax.swing.JFrame {
                     .addComponent(lblTextoZona)
                     .addComponent(lblZonaRes))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlIngresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTextoPrecio)
-                    .addComponent(lblPrecioRes))
+                .addGroup(pnlIngresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblPrecioRes, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblTextoPrecio))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlIngresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnConfirmarPaquete)
@@ -504,7 +515,7 @@ public class VentanaPaquetes extends javax.swing.JFrame {
                         .addComponent(btnQuitarDeEnvio))
                     .addGroup(pnlEnvioLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addGroup(pnlEnvioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(pnlEnvioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblPend)
                             .addComponent(lblSel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -829,7 +840,7 @@ public class VentanaPaquetes extends javax.swing.JFrame {
                 destinatario, direccion, departamento, zona, pesoGramos, precio);
 
         sistema.agregarPaquete(paquete);
-        sistema.registrarTransaccion("Ingreso de paquete " + identificador
+        ManejadorArchivos.registrarTransaccion("Ingreso de paquete " + identificador
                 + " de cliente " + clienteSeleccionado.getNombre());
 
         cargarTablaPaquetes();
@@ -1020,7 +1031,7 @@ public class VentanaPaquetes extends javax.swing.JFrame {
                     }
 
                     Envio envio = sistema.crearEnvio(fecha, funcionario, zona, copiaSeleccionados);
-                    sistema.registrarTransaccion("Ingreso de envío número " + envio.getNumero());
+                    ManejadorArchivos.registrarTransaccion("Ingreso de envío número " + envio.getNumero());
 
                     JOptionPane.showMessageDialog(this, "Envío registrado correctamente.");
 
@@ -1064,6 +1075,190 @@ public class VentanaPaquetes extends javax.swing.JFrame {
         } catch (ParseException e) {
             JOptionPane.showMessageDialog(this, "Error al configurar la fecha del envío.");
         }
+}
+    // =====================================================================
+    // RECEPCIÓN DE ENVÍOS
+    // =====================================================================
+    private void configurarRecepcion() {
+        enviosRecepcion = new ArrayList<Envio>();
+        paquetesRecepcion = new ArrayList<Paquete>();
+
+        lstPaquetesRecepcion.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        lstEnvios.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> lista, Object valor,
+                    int indice, boolean seleccionado, boolean tieneFoco) {
+
+                Component componente = super.getListCellRendererComponent(
+                        lista, valor, indice, seleccionado, tieneFoco);
+
+                if (indice >= 0 && indice < enviosRecepcion.size()) {
+                    Envio envio = enviosRecepcion.get(indice);
+
+                    if (envio.getRecibido()) {
+                        componente.setBackground(Color.GREEN);
+                    } else {
+                        componente.setBackground(Color.YELLOW);
+                    }
+
+                    componente.setForeground(Color.BLACK);
+                }
+
+                return componente;
+            }
+        });
+
+        lstEnvios.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                if (!evt.getValueIsAdjusting()) {
+                    seleccionarEnvioRecepcion();
+                }
+            }
+        });
+
+        btnConfirmarRecepcion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                confirmarRecepcion();
+            }
+        });
+
+        btnLimpiarRecepcion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                limpiarRecepcion();
+            }
+        });
+
+        cargarEnviosRecepcion();
+    }
+
+    private void cargarEnviosRecepcion() {
+        enviosRecepcion.clear();
+
+        for (int i = 0; i < sistema.getListaEnvios().size(); i = i + 1) {
+            enviosRecepcion.add(sistema.getListaEnvios().get(i));
+        }
+
+        Collections.sort(enviosRecepcion, new Comparator<Envio>() {
+            public int compare(Envio envio1, Envio envio2) {
+                return envio2.getNumero() - envio1.getNumero();
+            }
+        });
+
+        String[] datos = new String[enviosRecepcion.size()];
+
+        for (int i = 0; i < enviosRecepcion.size(); i = i + 1) {
+            Envio envio = enviosRecepcion.get(i);
+            datos[i] = textoEnvioRecepcion(envio);
+        }
+
+        lstEnvios.setListData(datos);
+        limpiarRecepcion();
+    }
+
+    private String textoEnvioRecepcion(Envio envio) {
+        return "Envío " + envio.getNumero()
+                + " - " + envio.getFecha()
+                + " - " + envio.getZona()
+                + " - " + envio.getFuncionario();
+    }
+
+    private void seleccionarEnvioRecepcion() {
+        int posicion = lstEnvios.getSelectedIndex();
+
+        paquetesRecepcion.clear();
+
+        if (posicion < 0) {
+            lblEstadoEnvioRes.setText("-");
+            lstPaquetesRecepcion.setListData(new String[0]);
+            btnConfirmarRecepcion.setEnabled(false);
+        } else {
+            Envio envio = enviosRecepcion.get(posicion);
+
+            if (envio.getRecibido()) {
+                lblEstadoEnvioRes.setText("Recibido");
+                btnConfirmarRecepcion.setEnabled(false);
+
+                for (int i = 0; i < envio.getListaPaquetesEntregados().size(); i = i + 1) {
+                    paquetesRecepcion.add(envio.getListaPaquetesEntregados().get(i));
+                }
+            } else {
+                lblEstadoEnvioRes.setText("Pendiente de recepción");
+                btnConfirmarRecepcion.setEnabled(true);
+
+                for (int i = 0; i < envio.getListaPaquetes().size(); i = i + 1) {
+                    paquetesRecepcion.add(envio.getListaPaquetes().get(i));
+                }
+            }
+
+            cargarListaPaquetesRecepcion();
+        }
+    }
+
+    private void cargarListaPaquetesRecepcion() {
+        String[] datos = new String[paquetesRecepcion.size()];
+
+        for (int i = 0; i < paquetesRecepcion.size(); i = i + 1) {
+            Paquete paquete = paquetesRecepcion.get(i);
+
+            datos[i] = paquete.getIdentificador()
+                    + " - " + paquete.getCliente().getNombre()
+                    + " - " + paquete.getDepartamento()
+                    + " - " + paquete.getPesoGramos() + " g"
+                    + " - $" + paquete.getPrecio()
+                    + " - " + paquete.getEstado();
+        }
+
+        lstPaquetesRecepcion.setListData(datos);
+    }
+
+    private void confirmarRecepcion() {
+        int posicionEnvio = lstEnvios.getSelectedIndex();
+
+        if (posicionEnvio < 0) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un envío.");
+        } else {
+            Envio envio = enviosRecepcion.get(posicionEnvio);
+
+            if (envio.getRecibido()) {
+                JOptionPane.showMessageDialog(this, "Ese envío ya tiene recepción registrada.");
+            } else {
+                int[] posiciones = lstPaquetesRecepcion.getSelectedIndices();
+
+                ArrayList<Paquete> paquetesEntregados = new ArrayList<Paquete>();
+
+                for (int i = 0; i < posiciones.length; i = i + 1) {
+                    paquetesEntregados.add(paquetesRecepcion.get(posiciones[i]));
+                }
+
+                int opcion = JOptionPane.showConfirmDialog(this,
+                        "Se marcarán como recibidos " + paquetesEntregados.size()
+                        + " paquete(s).\nLos demás volverán a pendiente.\n\n¿Confirmar recepción?",
+                        "Confirmar recepción",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (opcion == JOptionPane.YES_OPTION) {
+                    sistema.registrarRecepcion(envio, paquetesEntregados);
+
+                    ManejadorArchivos.registrarTransaccion(
+                            "Recepción de envío número " + envio.getNumero());
+
+                    cargarTablaPaquetes();
+                    cargarPendientesEnvio();
+                    cargarEnviosRecepcion();
+
+                    JOptionPane.showMessageDialog(this, "Recepción registrada correctamente.");
+                }
+            }
+        }
+    }
+
+    private void limpiarRecepcion() {
+        lstEnvios.clearSelection();
+        paquetesRecepcion.clear();
+        lstPaquetesRecepcion.setListData(new String[0]);
+        lblEstadoEnvioRes.setText("-");
+        btnConfirmarRecepcion.setEnabled(false);
     }
     private void txtIdentificadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdentificadorActionPerformed
         // TODO add your handling code here:
@@ -1175,4 +1370,13 @@ public class VentanaPaquetes extends javax.swing.JFrame {
     private javax.swing.JTextField txtIdentificador;
     private javax.swing.JTextField txtPesoGramos;
     // End of variables declaration//GEN-END:variables
+    @Override
+    public void actualizar() {
+        cargarComboClientes();
+        cargarFuncionariosEnvio();
+        cargarTablaPaquetes();
+        cargarPendientesEnvio();
+        cargarEnviosRecepcion();
+        lblNumEnvioRes.setText("" + sistema.getProximoNumeroEnvio());
+    }
 }

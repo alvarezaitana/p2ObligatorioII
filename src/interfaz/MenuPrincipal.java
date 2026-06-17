@@ -4,6 +4,7 @@
  */
 package interfaz;
 import dominio.*;
+import archivos.ManejadorArchivos;
 
 public class MenuPrincipal extends javax.swing.JFrame {
     
@@ -22,7 +23,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     addWindowListener(new java.awt.event.WindowAdapter() {
         @Override
         public void windowClosing(java.awt.event.WindowEvent evt) {
-            sistema.guardarSistema();
+            ManejadorArchivos.guardarSistema(sistema);
             System.exit(0);
         }
     });

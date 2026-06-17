@@ -7,7 +7,7 @@ package dominio;
 import java.util.*;
 import java.io.*;
 
-public class Sistema implements Serializable{
+public class Sistema extends Observable implements Serializable {
 
     // Identificador de version de la clase para serializacion
     private static final long serialVersionUID = 1L;
@@ -92,6 +92,7 @@ public class Sistema implements Serializable{
         if (!this.existeNombre(unCliente.getNombre())) {
             this.getListaClientes().add(unCliente);
             agregado = true;
+            notificarObservers();
         }
         return agregado;
     }
@@ -103,11 +104,13 @@ public class Sistema implements Serializable{
             !this.existeNumeroFuncionario(unFuncionario.getNumeroFuncionario())) {
                     this.getListaFuncionarios().add(unFuncionario);
                     agregado = true;
+                    notificarObservers();
         }
         return agregado;
     }
     public void agregarTarifa(Tarifa unaTarifa) {
         this.getListaTarifas().add(unaTarifa);
+        notificarObservers();
     }
 
     public Tarifa buscarTarifaPorZona(String unaZona) {
@@ -137,6 +140,7 @@ public class Sistema implements Serializable{
             Tarifa tarifa = this.getListaTarifas().get(i);
             tarifa.actualizarPorcentaje(porcentaje);
         }
+        notificarObservers();
     }
     
     public boolean existePaquete(String unIdentificador) {
@@ -157,6 +161,7 @@ public class Sistema implements Serializable{
         if (!this.existePaquete(unPaquete.getIdentificador())) {
             this.getListaPaquetes().add(unPaquete);
             agregado = true;
+            notificarObservers();
         }
         return agregado;
     }
@@ -225,11 +230,37 @@ public class Sistema implements Serializable{
         for (int i = 0; i < paquetesSeleccionados.size(); i++) {
             Paquete paquete = paquetesSeleccionados.get(i);
             envio.agregarPaquete(paquete);
-            paquete.setEstado("enviado");
+            paquete.setEstado("enviado");          
         }
         this.getListaEnvios().add(envio);
         this.setProximoNumeroEnvio(this.getProximoNumeroEnvio() + 1);
+        notificarObservers();
         return envio;
+    }
+    
+    public void registrarRecepcion(Envio unEnvio, ArrayList<Paquete> paquetesEntregados) {
+        ArrayList<Paquete> copiaPaquetes = new ArrayList<Paquete>();
+
+        for (int i = 0; i < unEnvio.getListaPaquetes().size(); i = i + 1) {
+            copiaPaquetes.add(unEnvio.getListaPaquetes().get(i));
+        }
+
+        unEnvio.getListaPaquetesEntregados().clear();
+
+        for (int i = 0; i < copiaPaquetes.size(); i = i + 1) {
+            Paquete paquete = copiaPaquetes.get(i);
+
+            if (paquetesEntregados.contains(paquete)) {
+                paquete.setEstado("recibido");
+                unEnvio.agregarPaqueteEntregado(paquete);
+            } else {
+                paquete.setEstado("pendiente");
+                unEnvio.quitarPaquete(paquete);
+            }
+        }
+
+        unEnvio.setRecibido(true);
+        notificarObservers();
     }
 
     public boolean existeNombreEnOtro(String unNombre, Cliente clienteActual, Funcionario funcionarioActual) {
@@ -285,8 +316,9 @@ public class Sistema implements Serializable{
             unCliente.setCelular(unCelular);
             unCliente.setCorreo(unCorreo);
             modificado = true;
+            notificarObservers();
         }
-
+        
         return modificado;
     }
 
@@ -300,11 +332,13 @@ public class Sistema implements Serializable{
                 unFuncionario.setNumeroFuncionario(unNumero);
                 unFuncionario.setAnioIngreso(unAnio);
                 modificado = true;
+                notificarObservers();
             }
         }
 
         return modificado;
     }
+    /*
     public void cargarTarifasTxt() throws IOException {
         this.getListaTarifas().clear();
         Scanner entrada = new Scanner(new File(ARCHIVO_TARIFAS));
@@ -382,22 +416,104 @@ public class Sistema implements Serializable{
     }
 
     public void registrarTransaccion(String descripcion) {
-    try {
-        java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
-        String linea = String.format("%02d/%02d/%02d %02d:%02d – %s",
-            ahora.getDayOfMonth(),
-            ahora.getMonthValue(),
-            ahora.getYear() % 100,
-            ahora.getHour(),
-            ahora.getMinute(),
-            descripcion);
-        PrintWriter pw = new PrintWriter(new FileWriter("Transacciones.log", true));
-        pw.println(linea);
-        pw.close();
-    } catch (IOException e) {
-        System.out.println("Error al escribir log: " + e.getMessage());
+        try {
+            java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
+            String linea = String.format("%02d/%02d/%02d %02d:%02d – %s",
+                ahora.getDayOfMonth(),
+                ahora.getMonthValue(),
+                ahora.getYear() % 100,
+                ahora.getHour(),
+                ahora.getMinute(),
+                descripcion);
+            PrintWriter pw = new PrintWriter(new FileWriter("Transacciones.log", true));
+            pw.println(linea);
+            pw.close();
+        } catch (IOException e) {
+            System.out.println("Error al escribir log: " + e.getMessage());
+        }
+      } 
+*/
+        public int contarPaquetesPorZonaYEstado(String unaZona, String unEstado) {
+        int cantidad = 0;
+
+        for (int i = 0; i < this.getListaPaquetes().size(); i = i + 1) {
+            Paquete paquete = this.getListaPaquetes().get(i);
+
+            if (paquete.getZona().equalsIgnoreCase(unaZona)
+                    && paquete.getEstado().equalsIgnoreCase(unEstado)) {
+                cantidad = cantidad + 1;
+            }
+        }
+
+        return cantidad;
     }
-  }
+
+    public int contarClientesDistintosPorZonaYEstado(String unaZona, String unEstado) {
+        ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+
+        for (int i = 0; i < this.getListaPaquetes().size(); i = i + 1) {
+            Paquete paquete = this.getListaPaquetes().get(i);
+
+            if (paquete.getZona().equalsIgnoreCase(unaZona)
+                    && paquete.getEstado().equalsIgnoreCase(unEstado)) {
+
+                Cliente cliente = paquete.getCliente();
+
+                if (!clientes.contains(cliente)) {
+                    clientes.add(cliente);
+                }
+            }
+        }
+
+        return clientes.size();
+    }
+
+    public ArrayList<String> darDepartamentosConPaquetes(String unaZona, String unEstado) {
+        ArrayList<String> departamentos = new ArrayList<String>();
+
+        for (int i = 0; i < this.getListaPaquetes().size(); i = i + 1) {
+            Paquete paquete = this.getListaPaquetes().get(i);
+
+            if (paquete.getZona().equalsIgnoreCase(unaZona)
+                    && paquete.getEstado().equalsIgnoreCase(unEstado)) {
+
+                String departamento = paquete.getDepartamento();
+
+                if (!departamentos.contains(departamento)) {
+                    departamentos.add(departamento);
+                }
+            }
+        }
+
+        return departamentos;
+    }
+
+    public int[] darPaquetesPorCliente(Cliente unCliente) {
+        int pendientes = 0;
+        int enviados = 0;
+        int recibidos = 0;
+
+        for (int i = 0; i < this.getListaPaquetes().size(); i = i + 1) {
+            Paquete paquete = this.getListaPaquetes().get(i);
+
+            if (paquete.getCliente() == unCliente) {
+                if (paquete.getEstado().equalsIgnoreCase("pendiente")) {
+                    pendientes = pendientes + 1;
+                } else {
+                    if (paquete.getEstado().equalsIgnoreCase("enviado")) {
+                        enviados = enviados + 1;
+                    } else {
+                        if (paquete.getEstado().equalsIgnoreCase("recibido")) {
+                            recibidos = recibidos + 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        int[] totales = {pendientes, enviados, recibidos};
+        return totales;
+    }
     
 }
 

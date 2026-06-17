@@ -3,36 +3,45 @@
  Valentina Ramos - 224347
  */
 package interfaz;
+
 import dominio.*;
+import archivos.ManejadorArchivos;
 import javax.swing.JOptionPane;
 import java.io.IOException;
 
 public class InicioSistema extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(InicioSistema.class.getName());
 
     public InicioSistema() {
         initComponents();
         btnUltEjecucion.setSelected(true);
     }
-    
+
     private void abrirMenuPrincipal(Sistema sistema) {
         MenuPrincipal menu = new MenuPrincipal(sistema);
         menu.setLocationRelativeTo(null);
         menu.setVisible(true);
         this.dispose();
     }
+
     private void iniciarSistema() {
-        Sistema sistema = new Sistema();
+        Sistema sistema = null;
 
         try {
-            sistema.cargarTarifasTxt();
+            if (btnUltEjecucion.isSelected()) {
+                sistema = ManejadorArchivos.cargarSistema();
+            } else {
+                sistema = new Sistema();
+            }
+
+            ManejadorArchivos.cargarTarifasTxt(sistema);
             abrirMenuPrincipal(sistema);
+
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "No se pudo cargar el archivo Tarifas.txt.");
+            JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
