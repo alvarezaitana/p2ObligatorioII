@@ -176,6 +176,33 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
 
         return hay;
     }
+    private boolean soloDigitos(String texto) {
+        boolean ok = true;
+        int i = 0;
+
+        if (texto.isEmpty()) {
+            ok = false;
+        }
+
+        while (i < texto.length() && ok) {
+            if (!Character.isDigit(texto.charAt(i))) {
+                ok = false;
+            }
+            i = i + 1;
+        }
+
+        return ok;
+    }
+
+    private boolean anioCuatroDigitos(String textoAnio) {
+        boolean ok = false;
+
+        if (soloDigitos(textoAnio) && textoAnio.length() == 4) {
+            ok = true;
+        }
+
+        return ok;
+    }
 
     private void agregarCliente() {
         String nombre = txtNomClie.getText().trim();
@@ -184,6 +211,8 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
 
         if (hayVacio(nombre, celular, correo)) {
             JOptionPane.showMessageDialog(this, "Debe completar todos los datos del cliente.");
+        } else if (!soloDigitos(celular)) {
+            JOptionPane.showMessageDialog(this, "El celular debe contener solo números.");
         } else {
             Cliente cliente = new Cliente(nombre, celular, correo);
             boolean agregado = sistema.agregarCliente(cliente);
@@ -223,8 +252,10 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
             String celular = txtCelClie.getText().trim();
             String correo = txtCorreoClie.getText().trim();
 
-            if (hayVacio(nombre, celular, correo)) {
+           if (hayVacio(nombre, celular, correo)) {
                 JOptionPane.showMessageDialog(this, "Debe completar todos los datos del cliente.");
+            } else if (!soloDigitos(celular)) {
+                JOptionPane.showMessageDialog(this, "El celular debe contener solo números.");
             } else {
                 boolean modificado = sistema.modificarCliente(cliente, nombre, celular, correo);
 
@@ -254,6 +285,12 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
 
         if (hayVacio(nombre, celular, textoNumero, textoAnio)) {
             JOptionPane.showMessageDialog(this, "Debe completar todos los datos del funcionario.");
+        } else if (!soloDigitos(celular)) {
+            JOptionPane.showMessageDialog(this, "El celular debe contener solo números.");
+        } else if (!soloDigitos(textoNumero)) {
+            JOptionPane.showMessageDialog(this, "El número de funcionario debe contener solo números.");
+        } else if (!anioCuatroDigitos(textoAnio)) {
+            JOptionPane.showMessageDialog(this, "El año de ingreso debe tener 4 cifras.");
         } else {
             try {
                 int numero = Integer.parseInt(textoNumero);
@@ -302,8 +339,14 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
             String textoNumero = txtNumFun.getText().trim();
             String textoAnio = txtAnoIng.getText().trim();
 
-            if (hayVacio(nombre, celular, textoNumero, textoAnio)) {
+           if (hayVacio(nombre, celular, textoNumero, textoAnio)) {
                 JOptionPane.showMessageDialog(this, "Debe completar todos los datos del funcionario.");
+            } else if (!soloDigitos(celular)) {
+                JOptionPane.showMessageDialog(this, "El celular debe contener solo números.");
+            } else if (!soloDigitos(textoNumero)) {
+                JOptionPane.showMessageDialog(this, "El número de funcionario debe contener solo números.");
+            } else if (!anioCuatroDigitos(textoAnio)) {
+                JOptionPane.showMessageDialog(this, "El año de ingreso debe tener 4 cifras.");
             } else {
                 try {
                     int numero = Integer.parseInt(textoNumero);

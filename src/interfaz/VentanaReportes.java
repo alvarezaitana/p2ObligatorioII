@@ -4,6 +4,7 @@
  */
 package interfaz;
 import dominio.*;
+import archivos.ManejadorArchivos;
 import java.util.ArrayList;
 import java.io.*;
 import javax.swing.*;
@@ -57,6 +58,11 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
+        });
+        lstClientes.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lstClientesValueChanged(evt);
+            }
         });
         jScrollPane2.setViewportView(lstClientes);
 
@@ -146,10 +152,10 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
         pnlLogTransacciones.setLayout(pnlLogTransaccionesLayout);
         pnlLogTransaccionesLayout.setHorizontalGroup(
             pnlLogTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLogTransaccionesLayout.createSequentialGroup()
-                .addContainerGap(409, Short.MAX_VALUE)
+            .addGroup(pnlLogTransaccionesLayout.createSequentialGroup()
+                .addGap(394, 394, 394)
                 .addComponent(btnBorrarLog)
-                .addGap(396, 396, 396))
+                .addContainerGap(411, Short.MAX_VALUE))
             .addGroup(pnlLogTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pnlLogTransaccionesLayout.createSequentialGroup()
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 889, Short.MAX_VALUE)
@@ -158,18 +164,19 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
         pnlLogTransaccionesLayout.setVerticalGroup(
             pnlLogTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLogTransaccionesLayout.createSequentialGroup()
-                .addContainerGap(340, Short.MAX_VALUE)
+                .addContainerGap(377, Short.MAX_VALUE)
                 .addComponent(btnBorrarLog)
-                .addGap(96, 96, 96))
+                .addGap(59, 59, 59))
             .addGroup(pnlLogTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pnlLogTransaccionesLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(193, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(117, Short.MAX_VALUE)))
         );
 
         pnelReportes.addTab("Log de Transacciones", pnlLogTransacciones);
 
+        tblEstados.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         tblEstados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -181,6 +188,11 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblEstados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblEstadosMouseClicked(evt);
+            }
+        });
         jScrollPane3.setViewportView(tblEstados);
 
         pnlMapa.setMinimumSize(new java.awt.Dimension(300, 350));
@@ -211,10 +223,13 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
         pnlEstadosLayout.setVerticalGroup(
             pnlEstadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlEstadosLayout.createSequentialGroup()
-                .addGap(35, 35, 35)
                 .addGroup(pnlEstadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlMapa, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlEstadosLayout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(pnlMapa, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlEstadosLayout.createSequentialGroup()
+                        .addGap(111, 111, 111)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(109, Short.MAX_VALUE))
         );
 
@@ -238,8 +253,18 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBorrarLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarLogActionPerformed
-        // TODO add your handling code here:
+        borrarLog();
     }//GEN-LAST:event_btnBorrarLogActionPerformed
+
+    private void lstClientesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstClientesValueChanged
+        if (!evt.getValueIsAdjusting()) {
+            mostrarPaquetesPorCliente();
+        }
+    }//GEN-LAST:event_lstClientesValueChanged
+
+    private void tblEstadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblEstadosMouseClicked
+        clickCeldaEstados(evt);
+    }//GEN-LAST:event_tblEstadosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -275,217 +300,185 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
 // =====================================================================
 // CONSULTA POR CLIENTE
 // =====================================================================
-private void cargarListaClientes() {
-    clientesMostrados = new ArrayList<Cliente>();
+    private void cargarListaClientes() {
+        clientesMostrados = new ArrayList<Cliente>();
 
-    for (int i = 0; i < sistema.getListaClientes().size(); i = i + 1) {
-        clientesMostrados.add(sistema.getListaClientes().get(i));
-    }
-
-    String[] datos = new String[clientesMostrados.size()];
-    for (int i = 0; i < clientesMostrados.size(); i = i + 1) {
-        datos[i] = clientesMostrados.get(i).getNombre();
-    }
-
-    lstClientes.setListData(datos);
-
-    lstClientes.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-        public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-            if (!evt.getValueIsAdjusting()) {
-                mostrarPaquetesPorCliente();
-            }
+        for (int i = 0; i < sistema.getListaClientes().size(); i = i + 1) {
+            clientesMostrados.add(sistema.getListaClientes().get(i));
         }
-    });
-}
 
-private void mostrarPaquetesPorCliente() {
-    int posicion = lstClientes.getSelectedIndex();
+        java.util.Collections.sort(clientesMostrados, new java.util.Comparator<Cliente>() {
+            public int compare(Cliente cliente1, Cliente cliente2) {
+                return cliente1.getNombre().compareToIgnoreCase(cliente2.getNombre());
+            }
+        });
 
-    if (posicion < 0) {
-        return;
+        String[] datos = new String[clientesMostrados.size()];
+        for (int i = 0; i < clientesMostrados.size(); i = i + 1) {
+            datos[i] = clientesMostrados.get(i).getNombre();
+        }
+
+        lstClientes.setListData(datos);
+        limpiarDatosCliente();
     }
 
-    Cliente cliente = clientesMostrados.get(posicion);
-    int[] totales = sistema.darPaquetesPorCliente(cliente);
+    private void mostrarPaquetesPorCliente() {
+        int posicion = lstClientes.getSelectedIndex();
 
-    lblPendientesRes.setText("" + totales[0]);
-    lblEnviadosRes.setText("" + totales[1]);
-    lblRecibidosRes.setText("" + totales[2]);
-    lblTotalRes.setText("" + (totales[0] + totales[1] + totales[2]));
-}
+        if (posicion < 0) {
+            limpiarDatosCliente();
+        } else {
+            Cliente cliente = clientesMostrados.get(posicion);
+            int[] totales = sistema.darPaquetesPorCliente(cliente);
+
+            lblPendientesRes.setText("" + totales[0]);
+            lblEnviadosRes.setText("" + totales[1]);
+            lblRecibidosRes.setText("" + totales[2]);
+            lblTotalRes.setText("" + (totales[0] + totales[1] + totales[2]));
+        }
+    }
+    private void limpiarDatosCliente() {
+        lblPendientesRes.setText("-");
+        lblEnviadosRes.setText("-");
+        lblRecibidosRes.setText("-");
+        lblTotalRes.setText("-");
+    }
 
 // =====================================================================
 // LOG DE TRANSACCIONES
 // =====================================================================
-private void cargarLog() {
-    try {
-        java.io.File archivo = new java.io.File("Transacciones.log");
+    private void cargarLog() {
+        txtLog.setText(ManejadorArchivos.leerLog());
+        txtLog.setCaretPosition(0);
+    }
 
-        if (!archivo.exists()) {
-            txtLog.setText("El archivo de log está vacío.");
+    private void borrarLog() {
+        int opcion = JOptionPane.showConfirmDialog(this,
+                "¿Está seguro que desea borrar todo el contenido del log?",
+                "Confirmar borrado",
+                JOptionPane.YES_NO_OPTION);
+
+        if (opcion == JOptionPane.YES_OPTION) {
+            try {
+                ManejadorArchivos.borrarLog();
+                cargarLog();
+                JOptionPane.showMessageDialog(this, "Log borrado correctamente.");
+            } catch (java.io.IOException e) {
+                JOptionPane.showMessageDialog(this, "Error al borrar el log.");
+            }
+        }
+    }
+
+    // =====================================================================
+    // PAQUETES POR ESTADO
+    // =====================================================================
+    private void cargarTablaEstados() {
+        String[] columnas = {"Zona", "Pendiente", "Enviado", "Recibido", "Total"};
+        String[] zonas = {"NORTE", "OESTE", "ESTE", "SUR"};
+
+        javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(columnas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        for (int i = 0; i < zonas.length; i = i + 1) {
+            String zona = zonas[i];
+            int pendientes = sistema.contarPaquetesPorZonaYEstado(zona, "pendiente");
+            int enviados = sistema.contarPaquetesPorZonaYEstado(zona, "enviado");
+            int recibidos = sistema.contarPaquetesPorZonaYEstado(zona, "recibido");
+            int total = pendientes + enviados + recibidos;
+
+            modelo.addRow(new Object[]{zona, pendientes, enviados, recibidos, total});
+        }
+
+        tblEstados.setModel(modelo);
+    }
+
+    private void clickCeldaEstados(java.awt.event.MouseEvent evt) {
+        int fila = tblEstados.getSelectedRow();
+        int columna = tblEstados.getSelectedColumn();
+
+        if (fila < 0 || columna <= 0 || columna == 4) {
             return;
         }
 
-        StringBuilder contenido = new StringBuilder();
-        java.util.Scanner scanner = new java.util.Scanner(archivo);
+        String zona = (String) tblEstados.getValueAt(fila, 0);
+        String[] estados = {"pendiente", "enviado", "recibido"};
+        String estado = estados[columna - 1];
 
-        while (scanner.hasNextLine()) {
-            contenido.append(scanner.nextLine()).append("\n");
-        }
-        scanner.close();
+        int cantClientes = sistema.contarClientesDistintosPorZonaYEstado(zona, estado);
+        ArrayList<String> departamentos = sistema.darDepartamentosConPaquetes(zona, estado);
 
-        if (contenido.length() == 0) {
-            txtLog.setText("El archivo de log está vacío.");
+        String textoDeps = "";
+        if (departamentos.isEmpty()) {
+            textoDeps = "Ninguno";
         } else {
-            txtLog.setText(contenido.toString());
-            txtLog.setCaretPosition(0);
+            for (int i = 0; i < departamentos.size(); i = i + 1) {
+                if (i > 0) {
+                    textoDeps = textoDeps + ", ";
+                }
+                textoDeps = textoDeps + departamentos.get(i);
+            }
         }
 
-    } catch (java.io.IOException e) {
-        txtLog.setText("Error al leer el archivo de log.");
+        JOptionPane.showMessageDialog(this,
+                "Zona: " + zona + " — Estado: " + estado.toUpperCase() + "\n\n"
+                + "Clientes distintos: " + cantClientes + "\n"
+                + "Departamentos: " + textoDeps,
+                "Detalle de celda",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
-    btnBorrarLog.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-            borrarLog();
+    private void configurarMapa() {
+        pnlMapa.removeAll();
+        pnlMapa.setLayout(null);
+
+        java.net.URL imgUrl = getClass().getResource("/recursos/mapa_uruguay.png");
+        if (imgUrl != null) {
+            javax.swing.ImageIcon icono = new javax.swing.ImageIcon(imgUrl);
+            java.awt.Image imgEscalada = icono.getImage()
+                    .getScaledInstance(300, 400, java.awt.Image.SCALE_SMOOTH);
+            JLabel lblFondo = new JLabel(new javax.swing.ImageIcon(imgEscalada));
+            lblFondo.setBounds(0, 0, 300, 400);
+            pnlMapa.add(lblFondo);
         }
-    });
-}
 
-private void borrarLog() {
-    int opcion = JOptionPane.showConfirmDialog(this,
-            "¿Está seguro que desea borrar todo el contenido del log?",
-            "Confirmar borrado",
-            JOptionPane.YES_NO_OPTION);
+        agregarEtiquetaZona("NORTE", 100, 50, pnlMapa);
+        agregarEtiquetaZona("OESTE", 40, 220, pnlMapa);
+        agregarEtiquetaZona("ESTE", 190, 220, pnlMapa);
+        agregarEtiquetaZona("SUR", 110, 290, pnlMapa);
 
-    if (opcion != JOptionPane.YES_OPTION) {
-        return;
+        pnlMapa.revalidate();
+        pnlMapa.repaint();
     }
 
-    try {
-        java.io.PrintWriter pw = new java.io.PrintWriter(
-                new java.io.FileWriter("Transacciones.log", false));
-        pw.close();
-        txtLog.setText("El archivo de log está vacío.");
-        JOptionPane.showMessageDialog(this, "Log borrado correctamente.");
-    } catch (java.io.IOException e) {
-        JOptionPane.showMessageDialog(this, "Error al borrar el log.");
-    }
-}
-
-private void cargarTablaEstados() {
-    String[] columnas = {"Zona", "Pendiente", "Enviado", "Recibido", "Total"};
-    String[] zonas = {"NORTE", "OESTE", "ESTE", "SUR"};
-
-    javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(columnas, 0) {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-    };
-
-    for (int i = 0; i < zonas.length; i = i + 1) {
-        String zona = zonas[i];
+private void agregarEtiquetaZona(String zona, int x, int y, javax.swing.JPanel panel) {
         int pendientes = sistema.contarPaquetesPorZonaYEstado(zona, "pendiente");
         int enviados = sistema.contarPaquetesPorZonaYEstado(zona, "enviado");
         int recibidos = sistema.contarPaquetesPorZonaYEstado(zona, "recibido");
-        int total = pendientes + enviados + recibidos;
 
-        modelo.addRow(new Object[]{zona, pendientes, enviados, recibidos, total});
+        String tooltip = "<html><b>" + zona + "</b><br>"
+                + "Pendientes: " + pendientes + "<br>"
+                + "Enviados: " + enviados + "<br>"
+                + "Recibidos: " + recibidos + "</html>";
+
+        JLabel lbl = new JLabel(zona);
+        lbl.setBounds(x, y, 80, 25);
+        lbl.setOpaque(true);
+        lbl.setBackground(new java.awt.Color(255, 255, 180));
+        lbl.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.DARK_GRAY));
+        lbl.setHorizontalAlignment(JLabel.CENTER);
+        lbl.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 11));
+        lbl.setToolTipText(tooltip);
+
+        javax.swing.ToolTipManager.sharedInstance().setInitialDelay(0);
+
+        panel.add(lbl);
+        panel.setComponentZOrder(lbl, 0);
     }
 
-    tblEstados.setModel(modelo);
-
-    tblEstados.addMouseListener(new java.awt.event.MouseAdapter() {
-        @Override
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            clickCeldaEstados(evt);
-        }
-    });
-}
-
-private void clickCeldaEstados(java.awt.event.MouseEvent evt) {
-    int fila = tblEstados.getSelectedRow();
-    int columna = tblEstados.getSelectedColumn();
-
-    if (fila < 0 || columna <= 0 || columna == 4) {
-        return;
-    }
-
-    String[] zonas = {"NORTE", "OESTE", "ESTE", "SUR"};
-    String[] estados = {"pendiente", "enviado", "recibido"};
-
-    String zona = zonas[fila];
-    String estado = estados[columna - 1];
-
-    int cantClientes = sistema.contarClientesDistintosPorZonaYEstado(zona, estado);
-    ArrayList<String> departamentos = sistema.darDepartamentosConPaquetes(zona, estado);
-
-    String textoDeps = "";
-    if (departamentos.isEmpty()) {
-        textoDeps = "Ninguno";
-    } else {
-        for (int i = 0; i < departamentos.size(); i = i + 1) {
-            if (i > 0) {
-                textoDeps = textoDeps + ", ";
-            }
-            textoDeps = textoDeps + departamentos.get(i);
-        }
-    }
-
-    JOptionPane.showMessageDialog(this,
-            "Zona: " + zona + " — Estado: " + estado.toUpperCase() + "\n\n"
-            + "Clientes distintos: " + cantClientes + "\n"
-            + "Departamentos: " + textoDeps,
-            "Detalle de celda",
-            JOptionPane.INFORMATION_MESSAGE);
-}
-
-private void configurarMapa() {
-    pnlMapa.setLayout(null);
-
-    // Imagen de fondo
-    java.net.URL imgUrl = getClass().getResource("/recursos/mapa_uruguay.png");
-    if (imgUrl != null) {
-        javax.swing.ImageIcon icono = new javax.swing.ImageIcon(imgUrl);
-        java.awt.Image imgEscalada = icono.getImage()
-                .getScaledInstance(300, 400, java.awt.Image.SCALE_SMOOTH);
-        JLabel lblFondo = new JLabel(new javax.swing.ImageIcon(imgEscalada));
-        lblFondo.setBounds(0, 0, 300, 400);
-        pnlMapa.add(lblFondo);
-    }
-
-    // Etiquetas de zona encima de la imagen
-    agregarEtiquetaZona("NORTE", 100, 50, pnlMapa);
-    agregarEtiquetaZona("OESTE", 40, 220, pnlMapa);
-    agregarEtiquetaZona("ESTE", 190, 220, pnlMapa);
-    agregarEtiquetaZona("SUR", 110, 290, pnlMapa);
-}
-
-private void agregarEtiquetaZona(String zona, int x, int y, javax.swing.JPanel panel) {
-    int pendientes = sistema.contarPaquetesPorZonaYEstado(zona, "pendiente");
-    int enviados = sistema.contarPaquetesPorZonaYEstado(zona, "enviado");
-    int recibidos = sistema.contarPaquetesPorZonaYEstado(zona, "recibido");
-
-    String tooltip = "<html><b>" + zona + "</b><br>"
-            + "Pendientes: " + pendientes + "<br>"
-            + "Enviados: " + enviados + "<br>"
-            + "Recibidos: " + recibidos + "</html>";
-
-    JLabel lbl = new JLabel(zona);
-    lbl.setBounds(x, y, 80, 25);
-    lbl.setOpaque(true);
-    lbl.setBackground(new java.awt.Color(255, 255, 180));
-    lbl.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.DARK_GRAY));
-    lbl.setHorizontalAlignment(JLabel.CENTER);
-    lbl.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 11));
-    lbl.setToolTipText(tooltip);
-
-    javax.swing.ToolTipManager.sharedInstance().setInitialDelay(0);
-
-    panel.add(lbl);
-    panel.setComponentZOrder(lbl, 0);
-}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBorrarLog;
@@ -513,5 +506,7 @@ private void agregarEtiquetaZona(String zona, int x, int y, javax.swing.JPanel p
     public void actualizar() {
         cargarListaClientes();
         cargarTablaEstados();
+        configurarMapa();
+        cargarLog();
     }
 }

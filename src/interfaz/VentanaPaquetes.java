@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.MaskFormatter;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.Collections;
@@ -441,15 +442,12 @@ private ArrayList<Paquete> paquetesRecepcion;
             .addGroup(pnlEnvioLayout.createSequentialGroup()
                 .addGroup(pnlEnvioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlEnvioLayout.createSequentialGroup()
-                        .addGap(162, 162, 162)
-                        .addComponent(lblPend))
-                    .addGroup(pnlEnvioLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(pnlEnvioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlEnvioLayout.createSequentialGroup()
-                                .addGap(164, 164, 164)
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(82, 82, 82)
+                                .addGap(56, 56, 56)
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(62, 62, 62)
                                 .addGroup(pnlEnvioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(btnAgregarAEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(btnQuitarDeEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -461,13 +459,17 @@ private ArrayList<Paquete> paquetesRecepcion;
                                 .addGroup(pnlEnvioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(cboFun, 0, 150, Short.MAX_VALUE)
                                     .addComponent(cboZonaEnvio, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txtFechaEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addGap(72, 72, 72)
+                                    .addComponent(txtFechaEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(pnlEnvioLayout.createSequentialGroup()
+                        .addGap(85, 85, 85)
+                        .addComponent(lblPend)))
                 .addGroup(pnlEnvioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlEnvioLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblSel))
+                        .addGap(100, 100, 100)
+                        .addComponent(lblSel))
+                    .addGroup(pnlEnvioLayout.createSequentialGroup()
+                        .addGap(78, 78, 78)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlEnvioLayout.createSequentialGroup()
                 .addContainerGap()
@@ -515,7 +517,7 @@ private ArrayList<Paquete> paquetesRecepcion;
                         .addComponent(btnQuitarDeEnvio))
                     .addGroup(pnlEnvioLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addGroup(pnlEnvioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(pnlEnvioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblPend)
                             .addComponent(lblSel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -585,23 +587,30 @@ private ArrayList<Paquete> paquetesRecepcion;
                         .addGap(245, 245, 245)
                         .addComponent(lblEstadoEnvio, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblEstadoEnvioRes, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlRecepcionLayout.createSequentialGroup()
-                        .addGap(171, 171, 171)
-                        .addGroup(pnlRecepcionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblEnviosRegistrados)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(144, 144, 144)
-                        .addGroup(pnlRecepcionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblPaquetesRecepcion)))
+                        .addComponent(lblEstadoEnvioRes, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlRecepcionLayout.createSequentialGroup()
                         .addGap(312, 312, 312)
                         .addComponent(btnConfirmarRecepcion))
                     .addGroup(pnlRecepcionLayout.createSequentialGroup()
                         .addGap(357, 357, 357)
                         .addComponent(btnLimpiarRecepcion)))
-                .addContainerGap(272, Short.MAX_VALUE))
+                .addContainerGap(164, Short.MAX_VALUE))
+            .addGroup(pnlRecepcionLayout.createSequentialGroup()
+                .addGroup(pnlRecepcionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlRecepcionLayout.createSequentialGroup()
+                        .addGap(116, 116, 116)
+                        .addComponent(lblEnviosRegistrados))
+                    .addGroup(pnlRecepcionLayout.createSequentialGroup()
+                        .addGap(51, 51, 51)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlRecepcionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRecepcionLayout.createSequentialGroup()
+                        .addComponent(lblPaquetesRecepcion)
+                        .addGap(198, 198, 198))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRecepcionLayout.createSequentialGroup()
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(115, 115, 115))))
         );
         pnlRecepcionLayout.setVerticalGroup(
             pnlRecepcionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -787,9 +796,14 @@ private ArrayList<Paquete> paquetesRecepcion;
         String direccion = txtDireccion.getText().trim();
         String textoPeso = txtPesoGramos.getText().trim();
 
-        if (identificador.isEmpty() || fecha.isEmpty() || destinatario.isEmpty()
+        if (identificador.isEmpty() || destinatario.isEmpty()
                 || direccion.isEmpty() || textoPeso.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Debe completar todos los campos.");
+            return;
+        }
+
+        if (!esFechaValida(fecha)) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar una fecha válida con formato dd/mm/aaaa.");
             return;
         }
 
@@ -1075,7 +1089,36 @@ private ArrayList<Paquete> paquetesRecepcion;
         } catch (ParseException e) {
             JOptionPane.showMessageDialog(this, "Error al configurar la fecha del envío.");
         }
-}
+        
+    }
+    private boolean esFechaValida(String fecha) {
+        boolean valida = false;
+
+        if (fecha != null) {
+            fecha = fecha.trim();
+
+            if (!fecha.contains("_") && fecha.length() == 10) {
+                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                formato.setLenient(false);
+
+                try {
+                    formato.parse(fecha);
+
+                    String[] partes = fecha.split("/");
+                    int anio = Integer.parseInt(partes[2]);
+
+                    if (anio >= 2000 && anio <= 2100) {
+                        valida = true;
+                    }
+
+                } catch (ParseException | NumberFormatException e) {
+                    valida = false;
+                }
+            }
+        }
+
+        return valida;
+    }
     // =====================================================================
     // RECEPCIÓN DE ENVÍOS
     // =====================================================================
@@ -1154,6 +1197,21 @@ private ArrayList<Paquete> paquetesRecepcion;
 
         lstEnvios.setListData(datos);
         limpiarRecepcion();
+    }
+    
+    private void seleccionarEnvioEnLista(Envio envioBuscado) {
+        int posicionEncontrada = -1;
+
+        for (int i = 0; i < enviosRecepcion.size(); i = i + 1) {
+            if (enviosRecepcion.get(i) == envioBuscado) {
+                posicionEncontrada = i;
+            }
+        }
+
+        if (posicionEncontrada >= 0) {
+            lstEnvios.setSelectedIndex(posicionEncontrada);
+            lstEnvios.ensureIndexIsVisible(posicionEncontrada);
+        }
     }
 
     private String textoEnvioRecepcion(Envio envio) {
@@ -1244,8 +1302,9 @@ private ArrayList<Paquete> paquetesRecepcion;
                             "Recepción de envío número " + envio.getNumero());
 
                     cargarTablaPaquetes();
-                    cargarPendientesEnvio();
+                    limpiarEnvio();
                     cargarEnviosRecepcion();
+                    seleccionarEnvioEnLista(envio);
 
                     JOptionPane.showMessageDialog(this, "Recepción registrada correctamente.");
                 }
