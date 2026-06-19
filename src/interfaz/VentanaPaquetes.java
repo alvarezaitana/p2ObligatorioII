@@ -790,6 +790,82 @@ private ArrayList<Paquete> paquetesRecepcion;
     }
 
     private void confirmarPaquete() {
+    String identificador = txtIdentificador.getText().trim();
+    String fecha = txtFechaPaquete.getText().trim();
+    String destinatario = txtDestinatario.getText().trim();
+    String direccion = txtDireccion.getText().trim();
+    String textoPeso = txtPesoGramos.getText().trim();
+    boolean ok = true;
+    int pesoGramos = 0;
+
+    if (identificador.isEmpty() || destinatario.isEmpty()
+            || direccion.isEmpty() || textoPeso.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Debe completar todos los campos.");
+        ok = false;
+    }
+
+    if (ok && !esFechaValida(fecha)) {
+        JOptionPane.showMessageDialog(this, "Debe ingresar una fecha válida con formato dd/mm/aaaa.");
+        ok = false;
+    }
+
+    if (ok && cboCliente.getSelectedIndex() < 0) {
+        JOptionPane.showMessageDialog(this, "No hay clientes registrados. Registre un cliente primero.");
+        ok = false;
+    }
+
+    if (ok && sistema.existePaquete(identificador)) {
+        JOptionPane.showMessageDialog(this, "Ya existe un paquete con ese identificador.");
+        ok = false;
+    }
+
+    if (ok) {
+        try {
+            pesoGramos = Integer.parseInt(textoPeso);
+            if (pesoGramos <= 0) {
+                JOptionPane.showMessageDialog(this, "El peso debe ser mayor a cero.");
+                ok = false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El peso debe ser un número entero en gramos.");
+            ok = false;
+        }
+    }
+
+    if (ok && obtenerClienteSeleccionado() == null) {
+        JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente.");
+        ok = false;
+    }
+
+    if (ok) {
+        Cliente clienteSeleccionado = obtenerClienteSeleccionado();
+        String departamento = (String) cboDepartamento.getSelectedItem();
+        String zona = sistema.darZonaDepartamento(departamento);
+        int precio = sistema.calcularPrecio(zona, pesoGramos);
+
+        int opcion = JOptionPane.showConfirmDialog(this,
+                "Zona: " + zona + "\nPrecio a cobrar: $" + precio + "\n\n¿Confirmar ingreso del paquete?",
+                "Confirmar paquete",
+                JOptionPane.YES_NO_OPTION);
+
+        if (opcion == JOptionPane.YES_OPTION) {
+            Paquete paquete = new Paquete(identificador, clienteSeleccionado, fecha,
+                    destinatario, direccion, departamento, zona, pesoGramos, precio);
+
+            sistema.agregarPaquete(paquete);
+            ManejadorArchivos.registrarTransaccion("Ingreso de paquete " + identificador
+                    + " de cliente " + clienteSeleccionado.getNombre());
+
+            cargarTablaPaquetes();
+            cargarPendientesEnvio();
+            limpiarFormulario();
+
+            JOptionPane.showMessageDialog(this, "Paquete ingresado correctamente.");
+        }
+    }
+}
+    
+/*    private void confirmarPaquete() {
         String identificador = txtIdentificador.getText().trim();
         String fecha = txtFechaPaquete.getText().trim();
         String destinatario = txtDestinatario.getText().trim();
@@ -862,7 +938,7 @@ private ArrayList<Paquete> paquetesRecepcion;
         limpiarFormulario();
 
         JOptionPane.showMessageDialog(this, "Paquete ingresado correctamente.");
-    }
+    }*/
 
     private void limpiarFormulario() {
         txtIdentificador.setText("");
@@ -1269,8 +1345,52 @@ private ArrayList<Paquete> paquetesRecepcion;
 
         lstPaquetesRecepcion.setListData(datos);
     }
-
+    
     private void confirmarRecepcion() {
+    int posicionEnvio = lstEnvios.getSelectedIndex();
+
+    if (posicionEnvio < 0) {
+        JOptionPane.showMessageDialog(this, "Debe seleccionar un envío.");
+    } else {
+        Envio envio = enviosRecepcion.get(posicionEnvio);
+
+        if (envio.getRecibido()) {
+            JOptionPane.showMessageDialog(this, "Ese envío ya tiene recepción registrada.");
+        } else {
+            // Guardar indices ANTES de cualquier dialogo que pueda robar el foco
+            int[] posiciones = lstPaquetesRecepcion.getSelectedIndices();
+            ArrayList<Paquete> paquetesEntregados = new ArrayList<Paquete>();
+
+            for (int i = 0; i < posiciones.length; i = i + 1) {
+                paquetesEntregados.add(paquetesRecepcion.get(posiciones[i]));
+            }
+
+            // Guardar referencia al envio antes de que los observers limpien todo
+            Envio envioAConfirmar = envio;
+
+            int opcion = JOptionPane.showConfirmDialog(this,
+                    "Se marcarán como recibidos " + paquetesEntregados.size()
+                    + " paquete(s).\nLos demás volverán a pendiente.\n\n¿Confirmar recepción?",
+                    "Confirmar recepción",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (opcion == JOptionPane.YES_OPTION) {
+                sistema.registrarRecepcion(envioAConfirmar, paquetesEntregados);
+
+                ManejadorArchivos.registrarTransaccion(
+                        "Recepción de envío número " + envioAConfirmar.getNumero());
+
+                cargarTablaPaquetes();
+                cargarEnviosRecepcion();
+                seleccionarEnvioEnLista(envioAConfirmar);
+
+                JOptionPane.showMessageDialog(this, "Recepción registrada correctamente.");
+            }
+        }
+    }
+}
+
+   /* private void confirmarRecepcion() {
         int posicionEnvio = lstEnvios.getSelectedIndex();
 
         if (posicionEnvio < 0) {
@@ -1310,7 +1430,7 @@ private ArrayList<Paquete> paquetesRecepcion;
                 }
             }
         }
-    }
+    }*/
 
     private void limpiarRecepcion() {
         lstEnvios.clearSelection();
