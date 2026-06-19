@@ -22,6 +22,12 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
         sistema = unSistema;
         sistema.agregarObserver(this);
         cargarDatosIniciales();
+        addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosing(java.awt.event.WindowEvent evt) {
+            sistema.quitarObserver(VentanaReportes.this);
+        }
+    });
     }
 
     

@@ -20,13 +20,18 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
     private ArrayList<Funcionario> funcionariosMostrados;
 
         public VentanaDatos(Sistema unSistema) {
-        initComponents();
-        sistema = unSistema;
-        sistema.agregarObserver(this);
-        cargarDatosIniciales();
-        configurarEventos();
-        
-    }
+            initComponents();
+            sistema = unSistema;
+            sistema.agregarObserver(this);
+            cargarDatosIniciales();
+            configurarEventos();
+            addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent evt) {
+                    sistema.quitarObserver(VentanaDatos.this);
+                }
+            });
+        }
     private void cargarDatosIniciales() {
         cargarListaClientes();
         cargarListaFuncionarios();
