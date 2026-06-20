@@ -20,16 +20,14 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 
-public class VentanaPaquetes extends javax.swing.JFrame implements Observer{
-    
+public class VentanaPaquetes extends javax.swing.JFrame implements Observer {  
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaPaquetes.class.getName());
-
     private Sistema sistema;
     private ArrayList<Paquete> paquetesPendientesEnvio;
     private ArrayList<Paquete> paquetesSeleccionadosEnvio;
     private ArrayList<Funcionario> funcionariosEnvio;
     private ArrayList<Envio> enviosRecepcion;
-private ArrayList<Paquete> paquetesRecepcion;
+    private ArrayList<Paquete> paquetesRecepcion;
     
     public VentanaPaquetes(Sistema unSistema) {
         initComponents();
@@ -46,7 +44,7 @@ private ArrayList<Paquete> paquetesRecepcion;
                 sistema.quitarObserver(VentanaPaquetes.this);
             }
         });
-}
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -192,6 +190,11 @@ private ArrayList<Paquete> paquetesRecepcion;
 
         btnLimpiarPaquete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnLimpiarPaquete.setText("Limpiar");
+        btnLimpiarPaquete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarPaqueteActionPerformed(evt);
+            }
+        });
 
         tablaPaquetes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -264,7 +267,7 @@ private ArrayList<Paquete> paquetesRecepcion;
                                 .addGroup(pnlIngresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(btnConfirmarPaquete)
                                     .addComponent(lblPaqReg, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 303, Short.MAX_VALUE)))
+                        .addGap(0, 197, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnlIngresoLayout.setVerticalGroup(
@@ -438,7 +441,7 @@ private ArrayList<Paquete> paquetesRecepcion;
                     .addGroup(pnlEnvioLayout.createSequentialGroup()
                         .addGroup(pnlEnvioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(lblMontTotRes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblPesoTotRes, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                            .addComponent(lblPesoTotRes, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE))
                         .addGap(528, 528, 528))))
             .addGroup(pnlEnvioLayout.createSequentialGroup()
                 .addGroup(pnlEnvioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -577,6 +580,11 @@ private ArrayList<Paquete> paquetesRecepcion;
 
         btnLimpiarRecepcion.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnLimpiarRecepcion.setText("Limpiar");
+        btnLimpiarRecepcion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarRecepcionActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlRecepcionLayout = new javax.swing.GroupLayout(pnlRecepcion);
         pnlRecepcion.setLayout(pnlRecepcionLayout);
@@ -595,7 +603,7 @@ private ArrayList<Paquete> paquetesRecepcion;
                     .addGroup(pnlRecepcionLayout.createSequentialGroup()
                         .addGap(357, 357, 357)
                         .addComponent(btnLimpiarRecepcion)))
-                .addContainerGap(164, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(pnlRecepcionLayout.createSequentialGroup()
                 .addGroup(pnlRecepcionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlRecepcionLayout.createSequentialGroup()
@@ -624,7 +632,7 @@ private ArrayList<Paquete> paquetesRecepcion;
                 .addGroup(pnlRecepcionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
                     .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(76, 76, 76)
+                .addGap(109, 109, 109)
                 .addGroup(pnlRecepcionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblEstadoEnvio)
                     .addComponent(lblEstadoEnvioRes))
@@ -632,7 +640,7 @@ private ArrayList<Paquete> paquetesRecepcion;
                 .addComponent(btnConfirmarRecepcion)
                 .addGap(34, 34, 34)
                 .addComponent(btnLimpiarRecepcion)
-                .addContainerGap(142, Short.MAX_VALUE))
+                .addContainerGap(109, Short.MAX_VALUE))
         );
 
         pnlPaquetes.addTab("Recepción", pnlRecepcion);
@@ -643,8 +651,7 @@ private ArrayList<Paquete> paquetesRecepcion;
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pnlPaquetes)
-                .addContainerGap())
+                .addComponent(pnlPaquetes))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -734,6 +741,22 @@ private ArrayList<Paquete> paquetesRecepcion;
             JOptionPane.showMessageDialog(this, "Error al configurar la fecha.");
         }
     }
+    
+    private Integer obtenerPesoValido(String textoPeso) {
+        Integer pesoValido = null;
+
+        try {
+            int peso = Integer.parseInt(textoPeso);
+
+            if (peso > 0) {
+                pesoValido = peso;
+            }
+        } catch (NumberFormatException e) {
+            pesoValido = null;
+        }
+
+        return pesoValido;
+    }
 
     // =====================================================================
     // INGRESO DE PAQUETES
@@ -746,32 +769,24 @@ private ArrayList<Paquete> paquetesRecepcion;
 
         if (textoPeso.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Debe ingresar el peso en gramos.");
-            return;
-        }
+        } else {
+            Integer pesoGramos = obtenerPesoValido(textoPeso);
 
-        try {
-            int pesoGramos = Integer.parseInt(textoPeso);
+            if (pesoGramos == null) {
+                JOptionPane.showMessageDialog(this, "El peso debe ser un número entero mayor a cero.");
+            } else {
+                String departamento = (String) cboDepartamento.getSelectedItem();
 
-            if (pesoGramos <= 0) {
-                JOptionPane.showMessageDialog(this, "El peso debe ser mayor a cero.");
-                return;
+                if (departamento == null) {
+                    JOptionPane.showMessageDialog(this, "Debe seleccionar un departamento.");
+                } else {
+                    String zona = sistema.darZonaDepartamento(departamento);
+                    int precio = sistema.calcularPrecio(zona, pesoGramos);
+
+                    lblZonaRes.setText(zona);
+                    lblPrecioRes.setText("$" + precio);
+                }
             }
-
-            String departamento = (String) cboDepartamento.getSelectedItem();
-
-            if (departamento == null) {
-                JOptionPane.showMessageDialog(this, "Debe seleccionar un departamento.");
-                return;
-            }
-
-            String zona = sistema.darZonaDepartamento(departamento);
-            int precio = sistema.calcularPrecio(zona, pesoGramos);
-
-            lblZonaRes.setText(zona);
-            lblPrecioRes.setText("$" + precio);
-
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "El peso debe ser un número entero en gramos.");
         }
     }
 
@@ -791,80 +806,85 @@ private ArrayList<Paquete> paquetesRecepcion;
     }
 
     private void confirmarPaquete() {
-    String identificador = txtIdentificador.getText().trim();
-    String fecha = txtFechaPaquete.getText().trim();
-    String destinatario = txtDestinatario.getText().trim();
-    String direccion = txtDireccion.getText().trim();
-    String textoPeso = txtPesoGramos.getText().trim();
-    boolean ok = true;
-    int pesoGramos = 0;
+        String identificador = txtIdentificador.getText().trim();
+        String fecha = txtFechaPaquete.getText().trim();
+        String destinatario = txtDestinatario.getText().trim();
+        String direccion = txtDireccion.getText().trim();
+        String textoPeso = txtPesoGramos.getText().trim();
+        boolean ok = true;
+        Integer pesoGramos = null;
 
-    if (identificador.isEmpty() || destinatario.isEmpty()
-            || direccion.isEmpty() || textoPeso.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Debe completar todos los campos.");
-        ok = false;
-    }
-
-    if (ok && !esFechaValida(fecha)) {
-        JOptionPane.showMessageDialog(this, "Debe ingresar una fecha válida con formato dd/mm/aaaa.");
-        ok = false;
-    }
-
-    if (ok && cboCliente.getSelectedIndex() < 0) {
-        JOptionPane.showMessageDialog(this, "No hay clientes registrados. Registre un cliente primero.");
-        ok = false;
-    }
-
-    if (ok && sistema.existePaquete(identificador)) {
-        JOptionPane.showMessageDialog(this, "Ya existe un paquete con ese identificador.");
-        ok = false;
-    }
-
-    if (ok) {
-        try {
-            pesoGramos = Integer.parseInt(textoPeso);
-            if (pesoGramos <= 0) {
-                JOptionPane.showMessageDialog(this, "El peso debe ser mayor a cero.");
-                ok = false;
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "El peso debe ser un número entero en gramos.");
+        if (identificador.isEmpty() || destinatario.isEmpty()
+                || direccion.isEmpty() || textoPeso.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe completar todos los campos.");
             ok = false;
         }
-    }
 
-    if (ok && obtenerClienteSeleccionado() == null) {
-        JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente.");
-        ok = false;
-    }
+        if (ok && !esFechaValida(fecha)) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar una fecha válida con formato dd/mm/aaaa.");
+            ok = false;
+        }
 
-    if (ok) {
-        Cliente clienteSeleccionado = obtenerClienteSeleccionado();
-        String departamento = (String) cboDepartamento.getSelectedItem();
-        String zona = sistema.darZonaDepartamento(departamento);
-        int precio = sistema.calcularPrecio(zona, pesoGramos);
+        if (ok && cboCliente.getSelectedIndex() < 0) {
+            JOptionPane.showMessageDialog(this, "No hay clientes registrados. Registre un cliente primero.");
+            ok = false;
+        }
 
-        int opcion = JOptionPane.showConfirmDialog(this,
-                "Zona: " + zona + "\nPrecio a cobrar: $" + precio + "\n\n¿Confirmar ingreso del paquete?",
-                "Confirmar paquete",
-                JOptionPane.YES_NO_OPTION);
+        if (ok && !esAlfanumerico(identificador)) {
+            JOptionPane.showMessageDialog(this, "El identificador debe ser alfanumérico (solo letras y números).");
+            ok = false;
+        }
 
-        if (opcion == JOptionPane.YES_OPTION) {
-            Paquete paquete = new Paquete(identificador, clienteSeleccionado, fecha,
-                    destinatario, direccion, departamento, zona, pesoGramos, precio);
+        if (ok && sistema.existePaquete(identificador)) {
+            JOptionPane.showMessageDialog(this, "Ya existe un paquete con ese identificador.");
+            ok = false;
+        }
 
-            sistema.agregarPaquete(paquete);
-            ManejadorArchivos.registrarTransaccion("Ingreso de paquete " + identificador
-                    + " de cliente " + clienteSeleccionado.getNombre());
+        if (ok) {
+            pesoGramos = obtenerPesoValido(textoPeso);
 
-            cargarTablaPaquetes();
-            cargarPendientesEnvio();
-            limpiarFormulario();
+            if (pesoGramos == null) {
+                JOptionPane.showMessageDialog(this, "El peso debe ser un número entero mayor a cero.");
+                ok = false;
+            }
+        }
 
-            JOptionPane.showMessageDialog(this, "Paquete ingresado correctamente.");
+        Cliente clienteSeleccionado = null;
+        if (ok) {
+            clienteSeleccionado = obtenerClienteSeleccionado();
+
+            if (clienteSeleccionado == null) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente.");
+                ok = false;
+            }
+        }
+
+        if (ok) {
+            String departamento = (String) cboDepartamento.getSelectedItem();
+            String zona = sistema.darZonaDepartamento(departamento);
+            int precio = sistema.calcularPrecio(zona, pesoGramos);
+
+            int opcion = JOptionPane.showConfirmDialog(this,
+                    "Zona: " + zona + "\nPrecio a cobrar: $" + precio + "\n\n¿Confirmar ingreso del paquete?",
+                    "Confirmar paquete",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (opcion == JOptionPane.YES_OPTION) {
+                Paquete paquete = new Paquete(identificador, clienteSeleccionado, fecha,
+                        destinatario, direccion, departamento, zona, pesoGramos, precio);
+
+                sistema.agregarPaquete(paquete);
+                ManejadorArchivos.registrarTransaccion("Ingreso de paquete " + identificador
+                        + " de cliente " + clienteSeleccionado.getNombre());
+
+                cargarTablaPaquetes();
+                cargarPendientesEnvio();
+                limpiarFormulario();
+
+                JOptionPane.showMessageDialog(this, "Paquete ingresado correctamente.");
+            }
         }
     }
-}
 
     private void limpiarFormulario() {
         txtIdentificador.setText("");
@@ -1033,6 +1053,8 @@ private ArrayList<Paquete> paquetesRecepcion;
 
         if (fecha.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Debe ingresar la fecha del envío.");
+        } else if (!esFechaValida(fecha)) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar una fecha válida con formato dd/mm/aaaa.");
         } else {
             if (funcionario == null) {
                 JOptionPane.showMessageDialog(this, "Debe seleccionar un funcionario.");
@@ -1093,6 +1115,28 @@ private ArrayList<Paquete> paquetesRecepcion;
         }
         
     }
+    
+    private boolean esAlfanumerico(String texto) {
+        boolean ok = true;
+        int i = 0;
+
+        if (texto.isEmpty()) {
+            ok = false;
+        }
+
+        while (i < texto.length() && ok) {
+            char c = texto.charAt(i);
+
+            if (!Character.isLetterOrDigit(c)) {
+                ok = false;
+            }
+
+            i = i + 1;
+        }
+
+        return ok;
+    }
+    
     private boolean esFechaValida(String fecha) {
         boolean valida = false;
 
@@ -1283,48 +1327,48 @@ private ArrayList<Paquete> paquetesRecepcion;
     }
     
     private void confirmarRecepcion() {
-    int posicionEnvio = lstEnvios.getSelectedIndex();
+        int posicionEnvio = lstEnvios.getSelectedIndex();
 
-    if (posicionEnvio < 0) {
-        JOptionPane.showMessageDialog(this, "Debe seleccionar un envío.");
-    } else {
-        Envio envio = enviosRecepcion.get(posicionEnvio);
-
-        if (envio.getRecibido()) {
-            JOptionPane.showMessageDialog(this, "Ese envío ya tiene recepción registrada.");
+        if (posicionEnvio < 0) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un envío.");
         } else {
-            // Guardar indices ANTES de cualquier dialogo que pueda robar el foco
-            int[] posiciones = lstPaquetesRecepcion.getSelectedIndices();
-            ArrayList<Paquete> paquetesEntregados = new ArrayList<Paquete>();
+            Envio envio = enviosRecepcion.get(posicionEnvio);
 
-            for (int i = 0; i < posiciones.length; i = i + 1) {
-                paquetesEntregados.add(paquetesRecepcion.get(posiciones[i]));
-            }
+            if (envio.getRecibido()) {
+                JOptionPane.showMessageDialog(this, "Ese envío ya tiene recepción registrada.");
+            } else {
+                // Guardar indices ANTES de cualquier dialogo que pueda robar el foco
+                int[] posiciones = lstPaquetesRecepcion.getSelectedIndices();
+                ArrayList<Paquete> paquetesEntregados = new ArrayList<Paquete>();
 
-            // Guardar referencia al envio antes de que los observers limpien todo
-            Envio envioAConfirmar = envio;
+                for (int i = 0; i < posiciones.length; i = i + 1) {
+                    paquetesEntregados.add(paquetesRecepcion.get(posiciones[i]));
+                }
 
-            int opcion = JOptionPane.showConfirmDialog(this,
-                    "Se marcarán como recibidos " + paquetesEntregados.size()
-                    + " paquete(s).\nLos demás volverán a pendiente.\n\n¿Confirmar recepción?",
-                    "Confirmar recepción",
-                    JOptionPane.YES_NO_OPTION);
+                // Guardar referencia al envio antes de que los observers limpien todo
+                Envio envioAConfirmar = envio;
 
-            if (opcion == JOptionPane.YES_OPTION) {
-                sistema.registrarRecepcion(envioAConfirmar, paquetesEntregados);
+                int opcion = JOptionPane.showConfirmDialog(this,
+                        "Se marcarán como recibidos " + paquetesEntregados.size()
+                        + " paquete(s).\nLos demás volverán a pendiente.\n\n¿Confirmar recepción?",
+                        "Confirmar recepción",
+                        JOptionPane.YES_NO_OPTION);
 
-                ManejadorArchivos.registrarTransaccion(
-                        "Recepción de envío número " + envioAConfirmar.getNumero());
+                if (opcion == JOptionPane.YES_OPTION) {
+                    sistema.registrarRecepcion(envioAConfirmar, paquetesEntregados);
 
-                cargarTablaPaquetes();
-                cargarEnviosRecepcion();
-                seleccionarEnvioEnLista(envioAConfirmar);
+                    ManejadorArchivos.registrarTransaccion(
+                            "Recepción de envío número " + envioAConfirmar.getNumero());
 
-                JOptionPane.showMessageDialog(this, "Recepción registrada correctamente.");
+                    cargarTablaPaquetes();
+                    cargarEnviosRecepcion();
+                    seleccionarEnvioEnLista(envioAConfirmar);
+
+                    JOptionPane.showMessageDialog(this, "Recepción registrada correctamente.");
+                }
             }
         }
     }
-}
     private void limpiarRecepcion() {
         lstEnvios.clearSelection();
         paquetesRecepcion.clear();
@@ -1333,15 +1377,12 @@ private ArrayList<Paquete> paquetesRecepcion;
         btnConfirmarRecepcion.setEnabled(false);
     }
     private void txtIdentificadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdentificadorActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtIdentificadorActionPerformed
 
     private void txtFechaPaqueteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaPaqueteActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtFechaPaqueteActionPerformed
 
     private void cboClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboClienteActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_cboClienteActionPerformed
 
     private void btnCalcularPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCalcularPrecioActionPerformed
@@ -1373,8 +1414,15 @@ private ArrayList<Paquete> paquetesRecepcion;
     }//GEN-LAST:event_cboZonaEnvioActionPerformed
 
     private void txtFechaEnvioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaEnvioActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtFechaEnvioActionPerformed
+
+    private void btnLimpiarRecepcionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarRecepcionActionPerformed
+        limpiarRecepcion();
+    }//GEN-LAST:event_btnLimpiarRecepcionActionPerformed
+
+    private void btnLimpiarPaqueteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarPaqueteActionPerformed
+        limpiarFormulario();
+    }//GEN-LAST:event_btnLimpiarPaqueteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

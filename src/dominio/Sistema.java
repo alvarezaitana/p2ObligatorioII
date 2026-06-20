@@ -5,7 +5,7 @@
  */
 package dominio;
 import java.util.*;
-import java.io.*;
+import java.io.Serializable;
 
 public class Sistema extends Observable implements Serializable {
 
@@ -18,8 +18,6 @@ public class Sistema extends Observable implements Serializable {
     private ArrayList<Paquete> listaPaquetes;
     private ArrayList<Envio> listaEnvios;
     private int proximoNumeroEnvio;
-    private static final String ARCHIVO_TARIFAS = "Tarifas.txt";
-    private static final String ARCHIVO_SISTEMA = "sistema.dat"; ////////////////////////////////////
 
     public Sistema() {
         listaClientes = new ArrayList<>();
@@ -59,13 +57,13 @@ public class Sistema extends Observable implements Serializable {
     public boolean existeNombre(String unNombre) {
         boolean existe = false;
 
-        for (int i = 0; i < this.getListaClientes().size(); i++) {
+        for (int i = 0; i < this.getListaClientes().size(); i = i + 1) {
             Cliente cliente = this.getListaClientes().get(i);
             if (cliente.getNombre().equalsIgnoreCase(unNombre)) {
                 existe = true;
             }
         }
-        for (int i = 0; i < this.getListaFuncionarios().size(); i++) {
+        for (int i = 0; i < this.getListaFuncionarios().size(); i = i + 1) {
             Funcionario funcionario = this.getListaFuncionarios().get(i);
             if (funcionario.getNombre().equalsIgnoreCase(unNombre)) {
                 existe = true;
@@ -77,7 +75,7 @@ public class Sistema extends Observable implements Serializable {
     public boolean existeNumeroFuncionario(int unNumeroFuncionario) {
         boolean existe = false;
 
-        for (int i = 0; i < this.getListaFuncionarios().size(); i++) {
+        for (int i = 0; i < this.getListaFuncionarios().size(); i = i + 1) {
             Funcionario funcionario = this.getListaFuncionarios().get(i);
             if (funcionario.getNumeroFuncionario() == unNumeroFuncionario) {
                 existe = true;
@@ -116,7 +114,7 @@ public class Sistema extends Observable implements Serializable {
     public Tarifa buscarTarifaPorZona(String unaZona) {
         Tarifa tarifaEncontrada = null;
 
-        for (int i = 0; i < this.getListaTarifas().size(); i++) {
+        for (int i = 0; i < this.getListaTarifas().size(); i = i + 1) {
             Tarifa tarifa = this.getListaTarifas().get(i);
             if (tarifa.getZona().equalsIgnoreCase(unaZona)) {
                 tarifaEncontrada = tarifa;
@@ -136,7 +134,7 @@ public class Sistema extends Observable implements Serializable {
     }
 
     public void actualizarTarifas(double porcentaje) {
-        for (int i = 0; i < this.getListaTarifas().size(); i++) {
+        for (int i = 0; i < this.getListaTarifas().size(); i = i + 1) {
             Tarifa tarifa = this.getListaTarifas().get(i);
             tarifa.actualizarPorcentaje(porcentaje);
         }
@@ -146,7 +144,7 @@ public class Sistema extends Observable implements Serializable {
     public boolean existePaquete(String unIdentificador) {
         boolean existe = false;
 
-        for (int i = 0; i < this.getListaPaquetes().size(); i++) {
+        for (int i = 0; i < this.getListaPaquetes().size(); i = i + 1) {
             Paquete paquete = this.getListaPaquetes().get(i);
             if (paquete.getIdentificador().equalsIgnoreCase(unIdentificador)) {
                 existe = true;
@@ -213,7 +211,7 @@ public class Sistema extends Observable implements Serializable {
     public ArrayList<Paquete> darPaquetesPendientesPorZona(String unaZona) {
         ArrayList<Paquete> paquetes = new ArrayList<>();
 
-        for (int i = 0; i < this.getListaPaquetes().size(); i++) {
+        for (int i = 0; i < this.getListaPaquetes().size(); i = i + 1) {
             Paquete paquete = this.getListaPaquetes().get(i);
             if (paquete.getEstado().equalsIgnoreCase("pendiente")
                 && paquete.getZona().equalsIgnoreCase(unaZona)) {
@@ -227,7 +225,7 @@ public class Sistema extends Observable implements Serializable {
     public Envio crearEnvio(String unaFecha, Funcionario unFuncionario, String unaZona, ArrayList<Paquete> paquetesSeleccionados) {
         Envio envio = new Envio(this.getProximoNumeroEnvio(), unaFecha, unFuncionario, unaZona);
 
-        for (int i = 0; i < paquetesSeleccionados.size(); i++) {
+        for (int i = 0; i < paquetesSeleccionados.size(); i = i + 1) {
             Paquete paquete = paquetesSeleccionados.get(i);
             envio.agregarPaquete(paquete);
             paquete.setEstado("enviado");          
@@ -418,6 +416,38 @@ public class Sistema extends Observable implements Serializable {
 
         int[] totales = {pendientes, enviados, recibidos};
         return totales;
+    }
+    
+    public ArrayList<Cliente> darClientesOrdenados() {
+    ArrayList<Cliente> ordenados = new ArrayList<Cliente>();
+
+    for (int i = 0; i < this.getListaClientes().size(); i = i + 1) {
+        ordenados.add(this.getListaClientes().get(i));
+    }
+
+    Collections.sort(ordenados, new Comparator<Cliente>() {
+        public int compare(Cliente cliente1, Cliente cliente2) {
+            return cliente1.getNombre().compareToIgnoreCase(cliente2.getNombre());
+        }
+    });
+
+    return ordenados;
+    }
+
+    public ArrayList<Funcionario> darFuncionariosOrdenados() {
+        ArrayList<Funcionario> ordenados = new ArrayList<Funcionario>();
+
+        for (int i = 0; i < this.getListaFuncionarios().size(); i = i + 1) {
+            ordenados.add(this.getListaFuncionarios().get(i));
+        }
+
+        Collections.sort(ordenados, new Comparator<Funcionario>() {
+            public int compare(Funcionario funcionario1, Funcionario funcionario2) {
+                return funcionario2.getAnioIngreso() - funcionario1.getAnioIngreso();
+            }
+        });
+
+        return ordenados;
     }
     
 }

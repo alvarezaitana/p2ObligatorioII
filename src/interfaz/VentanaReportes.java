@@ -11,8 +11,6 @@ import javax.swing.*;
 
 public class VentanaReportes extends javax.swing.JFrame implements Observer{
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaReportes.class.getName());
-
     private Sistema sistema;
     
     private ArrayList<Cliente> clientesMostrados;
@@ -47,6 +45,7 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
         lblEnviadosRes = new javax.swing.JLabel();
         lblRecibidosRes = new javax.swing.JLabel();
         lblTotalRes = new javax.swing.JLabel();
+        lblCliente = new javax.swing.JLabel();
         pnlLogTransacciones = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtLog = new javax.swing.JTextArea();
@@ -55,6 +54,7 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
         jScrollPane3 = new javax.swing.JScrollPane();
         tblEstados = new javax.swing.JTable();
         pnlMapa = new javax.swing.JPanel();
+        lblCliente1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -92,26 +92,34 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
 
         lblTotalRes.setText("-");
 
+        lblCliente.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCliente.setText("Datos de los clientes");
+
         javax.swing.GroupLayout pnlClienteLayout = new javax.swing.GroupLayout(pnlCliente);
         pnlCliente.setLayout(pnlClienteLayout);
         pnlClienteLayout.setHorizontalGroup(
             pnlClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlClienteLayout.createSequentialGroup()
                 .addGap(43, 43, 43)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 114, Short.MAX_VALUE)
                 .addGroup(pnlClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblEnviados)
-                    .addComponent(lblPendientes)
-                    .addComponent(lblRecibidos)
-                    .addComponent(lblTotal))
-                .addGap(74, 74, 74)
-                .addGroup(pnlClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblPendientesRes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblRecibidosRes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblEnviadosRes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblTotalRes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(267, 267, 267))
+                    .addGroup(pnlClienteLayout.createSequentialGroup()
+                        .addComponent(lblCliente)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(pnlClienteLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
+                        .addGroup(pnlClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblEnviados)
+                            .addComponent(lblPendientes)
+                            .addComponent(lblRecibidos)
+                            .addComponent(lblTotal))
+                        .addGap(74, 74, 74)
+                        .addGroup(pnlClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblPendientesRes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblRecibidosRes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblEnviadosRes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblTotalRes, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(267, 267, 267))))
         );
         pnlClienteLayout.setVerticalGroup(
             pnlClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,9 +144,11 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
                             .addComponent(lblTotalRes)
                             .addComponent(lblTotal)))
                     .addGroup(pnlClienteLayout.createSequentialGroup()
-                        .addGap(91, 91, 91)
+                        .addGap(32, 32, 32)
+                        .addComponent(lblCliente)
+                        .addGap(39, 39, 39)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(226, Short.MAX_VALUE))
+                .addContainerGap(309, Short.MAX_VALUE))
         );
 
         pnelReportes.addTab("Consulta por Cliente", pnlCliente);
@@ -170,7 +180,7 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
         pnlLogTransaccionesLayout.setVerticalGroup(
             pnlLogTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlLogTransaccionesLayout.createSequentialGroup()
-                .addContainerGap(381, Short.MAX_VALUE)
+                .addContainerGap(464, Short.MAX_VALUE)
                 .addComponent(btnBorrarLog)
                 .addGap(59, 59, 59))
             .addGroup(pnlLogTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -215,28 +225,35 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
             .addGap(0, 350, Short.MAX_VALUE)
         );
 
+        lblCliente1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblCliente1.setText("Estado de cada paquete");
+
         javax.swing.GroupLayout pnlEstadosLayout = new javax.swing.GroupLayout(pnlEstados);
         pnlEstados.setLayout(pnlEstadosLayout);
         pnlEstadosLayout.setHorizontalGroup(
             pnlEstadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlEstadosLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(pnlEstadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCliente1))
                 .addGap(34, 34, 34)
                 .addComponent(pnlMapa, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
         pnlEstadosLayout.setVerticalGroup(
             pnlEstadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlEstadosLayout.createSequentialGroup()
                 .addGroup(pnlEstadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlEstadosLayout.createSequentialGroup()
-                        .addGap(111, 111, 111)
+                        .addGap(43, 43, 43)
+                        .addComponent(lblCliente1)
+                        .addGap(48, 48, 48)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlEstadosLayout.createSequentialGroup()
                         .addGap(35, 35, 35)
                         .addComponent(pnlMapa, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(78, Short.MAX_VALUE))
+                .addContainerGap(161, Short.MAX_VALUE))
         );
 
         pnelReportes.addTab("Paquetes por estado", pnlEstados);
@@ -252,7 +269,7 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnelReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 581, Short.MAX_VALUE)
+            .addComponent(pnelReportes)
         );
 
         pack();
@@ -272,30 +289,6 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
         clickCeldaEstados(evt);
     }//GEN-LAST:event_tblEstadosMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new VentanaReportes(new Sistema()).setVisible(true));
-    }
     private void cargarDatosIniciales() {
     cargarListaClientes();
     cargarLog();
@@ -307,17 +300,7 @@ public class VentanaReportes extends javax.swing.JFrame implements Observer{
 // CONSULTA POR CLIENTE
 // =====================================================================
     private void cargarListaClientes() {
-        clientesMostrados = new ArrayList<Cliente>();
-
-        for (int i = 0; i < sistema.getListaClientes().size(); i = i + 1) {
-            clientesMostrados.add(sistema.getListaClientes().get(i));
-        }
-
-        java.util.Collections.sort(clientesMostrados, new java.util.Comparator<Cliente>() {
-            public int compare(Cliente cliente1, Cliente cliente2) {
-                return cliente1.getNombre().compareToIgnoreCase(cliente2.getNombre());
-            }
-        });
+        clientesMostrados = sistema.darClientesOrdenados();
 
         String[] datos = new String[clientesMostrados.size()];
         for (int i = 0; i < clientesMostrados.size(); i = i + 1) {
@@ -491,6 +474,8 @@ private void agregarEtiquetaZona(String zona, int x, int y, javax.swing.JPanel p
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lblCliente;
+    private javax.swing.JLabel lblCliente1;
     private javax.swing.JLabel lblEnviados;
     private javax.swing.JLabel lblEnviadosRes;
     private javax.swing.JLabel lblPendientes;

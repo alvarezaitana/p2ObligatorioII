@@ -12,14 +12,13 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-public class VentanaDatos extends javax.swing.JFrame implements Observer {
-    
+public class VentanaDatos extends javax.swing.JFrame implements Observer {   
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaDatos.class.getName());
     private Sistema sistema;
     private ArrayList<Cliente> clientesMostrados;
     private ArrayList<Funcionario> funcionariosMostrados;
-
-        public VentanaDatos(Sistema unSistema) {
+    
+    public VentanaDatos(Sistema unSistema) {
             initComponents();
             sistema = unSistema;
             sistema.agregarObserver(this);
@@ -32,6 +31,7 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
                 }
             });
         }
+        
     private void cargarDatosIniciales() {
         cargarListaClientes();
         cargarListaFuncionarios();
@@ -94,41 +94,20 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
         });
     }
     private void cargarListaClientes() {
-        clientesMostrados = new ArrayList<Cliente>();
+    clientesMostrados = sistema.darClientesOrdenados();
 
-        for (int i = 0; i < sistema.getListaClientes().size(); i = i + 1) {
-            clientesMostrados.add(sistema.getListaClientes().get(i));
-        }
-
-        Collections.sort(clientesMostrados, new Comparator<Cliente>() {
-            public int compare(Cliente cliente1, Cliente cliente2) {
-                return cliente1.getNombre().compareToIgnoreCase(cliente2.getNombre());
-            }
-        });
-
-        String[] datos = new String[clientesMostrados.size()];
-
-        for (int i = 0; i < clientesMostrados.size(); i = i + 1) {
-            datos[i] = clientesMostrados.get(i).getNombre();
-        }
-
-        lstClientes.setListData(datos);
+    String[] datos = new String[clientesMostrados.size()];
+    for (int i = 0; i < clientesMostrados.size(); i = i + 1) {
+        datos[i] = clientesMostrados.get(i).getNombre();
     }
+
+    lstClientes.setListData(datos);
+    }
+
     private void cargarListaFuncionarios() {
-        funcionariosMostrados = new ArrayList<Funcionario>();
-
-        for (int i = 0; i < sistema.getListaFuncionarios().size(); i = i + 1) {
-            funcionariosMostrados.add(sistema.getListaFuncionarios().get(i));
-        }
-
-        Collections.sort(funcionariosMostrados, new Comparator<Funcionario>() {
-            public int compare(Funcionario funcionario1, Funcionario funcionario2) {
-                return funcionario2.getAnioIngreso() - funcionario1.getAnioIngreso();
-            }
-        });
+        funcionariosMostrados = sistema.darFuncionariosOrdenados();
 
         String[] datos = new String[funcionariosMostrados.size()];
-
         for (int i = 0; i < funcionariosMostrados.size(); i = i + 1) {
             datos[i] = funcionariosMostrados.get(i).getNombre();
         }
@@ -198,15 +177,58 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
 
         return ok;
     }
+    
+    private boolean celularValido(String celular) {
+        boolean valido = false;
 
-    private boolean anioCuatroDigitos(String textoAnio) {
-        boolean ok = false;
-
-        if (soloDigitos(textoAnio) && textoAnio.length() == 4) {
-            ok = true;
+        if (soloDigitos(celular) && celular.length() >= 8 && celular.length() <= 9) {
+            valido = true;
         }
 
-        return ok;
+        return valido;
+    }
+    
+    
+    private boolean numeroFuncionarioValido(String numero) {
+        boolean valido = false;
+
+        if (soloDigitos(numero) && numero.length() <= 6) {
+            valido = true;
+        }
+
+        return valido;
+    }
+
+    private boolean anioIngresoValido(String textoAnio) {
+        boolean valido = false;
+
+        if (soloDigitos(textoAnio) && textoAnio.length() == 4) {
+            int anio = Integer.parseInt(textoAnio);
+
+            if (anio >= 1990 && anio <= 2026) {
+                valido = true;
+            }
+        }
+
+        return valido;
+    }
+    
+    private boolean esEmailValido(String email) {
+        boolean valido = false;
+        int posicionArroba = email.indexOf("@");
+        int posicionPunto = email.lastIndexOf(".");
+
+        if (posicionArroba > 0) {
+            if (posicionPunto > posicionArroba + 1) {
+                if (posicionPunto < email.length() - 1) {
+                    if (!email.contains(" ")) {
+                        valido = true;
+                    }
+                }
+            }
+        }
+
+        return valido;
     }
 
     private void agregarCliente() {
@@ -216,8 +238,10 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
 
         if (hayVacio(nombre, celular, correo)) {
             JOptionPane.showMessageDialog(this, "Debe completar todos los datos del cliente.");
-        } else if (!soloDigitos(celular)) {
-            JOptionPane.showMessageDialog(this, "El celular debe contener solo números.");
+        } else if (!celularValido(celular)) {
+            JOptionPane.showMessageDialog(this, "El celular debe tener entre 8 y 9 dígitos numéricos.");
+        } else if (!esEmailValido(correo)) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar un correo electrónico válido.");
         } else {
             Cliente cliente = new Cliente(nombre, celular, correo);
             boolean agregado = sistema.agregarCliente(cliente);
@@ -259,8 +283,10 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
 
            if (hayVacio(nombre, celular, correo)) {
                 JOptionPane.showMessageDialog(this, "Debe completar todos los datos del cliente.");
-            } else if (!soloDigitos(celular)) {
-                JOptionPane.showMessageDialog(this, "El celular debe contener solo números.");
+            } else if (!celularValido(celular)) {
+                JOptionPane.showMessageDialog(this, "El celular debe tener entre 8 y 9 dígitos numéricos.");
+            } else if (!esEmailValido(correo)) {
+                JOptionPane.showMessageDialog(this, "Debe ingresar un correo electrónico válido.");
             } else {
                 boolean modificado = sistema.modificarCliente(cliente, nombre, celular, correo);
 
@@ -290,12 +316,12 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
 
         if (hayVacio(nombre, celular, textoNumero, textoAnio)) {
             JOptionPane.showMessageDialog(this, "Debe completar todos los datos del funcionario.");
-        } else if (!soloDigitos(celular)) {
-            JOptionPane.showMessageDialog(this, "El celular debe contener solo números.");
-        } else if (!soloDigitos(textoNumero)) {
-            JOptionPane.showMessageDialog(this, "El número de funcionario debe contener solo números.");
-        } else if (!anioCuatroDigitos(textoAnio)) {
-            JOptionPane.showMessageDialog(this, "El año de ingreso debe tener 4 cifras.");
+        } else if (!celularValido(celular)) {
+            JOptionPane.showMessageDialog(this, "El celular debe tener entre 8 y 9 dígitos numéricos.");
+        } else if (!numeroFuncionarioValido(textoNumero)) {
+            JOptionPane.showMessageDialog(this, "El número de funcionario debe ser numérico y tener hasta 6 dígitos.");
+        } else if (!anioIngresoValido(textoAnio)) {
+            JOptionPane.showMessageDialog(this, "El año de ingreso debe estar entre 1990 y 2026.");
         } else {
             try {
                 int numero = Integer.parseInt(textoNumero);
@@ -346,12 +372,12 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
 
            if (hayVacio(nombre, celular, textoNumero, textoAnio)) {
                 JOptionPane.showMessageDialog(this, "Debe completar todos los datos del funcionario.");
-            } else if (!soloDigitos(celular)) {
-                JOptionPane.showMessageDialog(this, "El celular debe contener solo números.");
-            } else if (!soloDigitos(textoNumero)) {
-                JOptionPane.showMessageDialog(this, "El número de funcionario debe contener solo números.");
-            } else if (!anioCuatroDigitos(textoAnio)) {
-                JOptionPane.showMessageDialog(this, "El año de ingreso debe tener 4 cifras.");
+            } else if (!celularValido(celular)) {
+                JOptionPane.showMessageDialog(this, "El celular debe tener entre 8 y 9 dígitos.");
+            } else if (!numeroFuncionarioValido(textoNumero)) {
+                JOptionPane.showMessageDialog(this, "El número de funcionario debe ser numérico y tener hasta 6 dígitos.");
+            } else if (!anioIngresoValido(textoAnio)) {
+                JOptionPane.showMessageDialog(this, "El año de ingreso debe estar entre 1990 y 2026.");
             } else {
                 try {
                     int numero = Integer.parseInt(textoNumero);
@@ -390,14 +416,18 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
             try {
                 double porcentaje = Double.parseDouble(textoPorcentaje);
 
-                sistema.actualizarTarifas(porcentaje);
-                ManejadorArchivos.grabarTarifasTxt(sistema);
-                ManejadorArchivos.registrarTransaccion("Actualización de tarifas con " + porcentaje + "%");  // REGISTRAR EL LOG
-                cargarTablaTarifas();
+                if (porcentaje < -50 || porcentaje > 200) {
+                    JOptionPane.showMessageDialog(this, "El porcentaje debe estar entre -50% y 200%.");
+                } else {
+                    sistema.actualizarTarifas(porcentaje);
+                    ManejadorArchivos.grabarTarifasTxt(sistema);
+                    ManejadorArchivos.registrarTransaccion("Actualización de tarifas con " + porcentaje + "%");  // REGISTRAR EL LOG
+                    cargarTablaTarifas();
 
-                txtPorcentaje.setText("");
+                    txtPorcentaje.setText("");
 
-                JOptionPane.showMessageDialog(this, "Tarifas actualizadas correctamente.");
+                    JOptionPane.showMessageDialog(this, "Tarifas actualizadas correctamente.");
+                }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "El porcentaje debe ser numérico.");
             } catch (IOException e) {
@@ -514,23 +544,14 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
             .addGroup(pnlClientesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblClieReg)
                     .addGroup(pnlClientesLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblClieReg))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
                 .addGroup(pnlClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblDatosClie, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlClientesLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
-                        .addComponent(btnModificarClie)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnLimpiarClie, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(21, 21, 21))
-                    .addGroup(pnlClientesLayout.createSequentialGroup()
-                        .addGap(83, 83, 83)
-                        .addComponent(lblDatosClie, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(pnlClientesLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(pnlClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(lstNom, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lstCel, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -539,12 +560,14 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
                         .addGroup(pnlClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtNomClie, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtCelClie, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCorreoClie, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlClientesLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAgregarClie, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(66, 66, 66))))
+                            .addComponent(txtCorreoClie, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAgregarClie, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnModificarClie))))
+                .addGap(0, 155, Short.MAX_VALUE))
+            .addGroup(pnlClientesLayout.createSequentialGroup()
+                .addGap(276, 276, 276)
+                .addComponent(btnLimpiarClie, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         pnlClientesLayout.setVerticalGroup(
             pnlClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -570,11 +593,11 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
                         .addGap(18, 18, 18)
                         .addComponent(btnAgregarClie))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
-                .addGroup(pnlClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnModificarClie)
-                    .addComponent(btnLimpiarClie))
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnModificarClie)
+                .addGap(27, 27, 27)
+                .addComponent(btnLimpiarClie)
+                .addContainerGap(78, Short.MAX_VALUE))
         );
 
         panelDatos.addTab("Clientes", pnlClientes);
@@ -629,40 +652,31 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
                     .addComponent(lblFunReg)
                     .addGroup(pnlFuncionariosLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(27, 27, 27)
-                .addGroup(pnlFuncionariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlFuncionariosLayout.createSequentialGroup()
-                        .addComponent(lblDatosFun)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(pnlFuncionariosLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnModFun)
-                        .addGap(50, 50, 50)
-                        .addComponent(btnLimFun, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
+                .addGroup(pnlFuncionariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlFuncionariosLayout.createSequentialGroup()
-                        .addGroup(pnlFuncionariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(pnlFuncionariosLayout.createSequentialGroup()
-                                .addComponent(lblAnoIng)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtAnoIng, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlFuncionariosLayout.createSequentialGroup()
-                                .addGap(0, 2, Short.MAX_VALUE)
-                                .addGroup(pnlFuncionariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(btnAgFun, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(pnlFuncionariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(lblCelFun)
-                                        .addGroup(pnlFuncionariosLayout.createSequentialGroup()
-                                            .addGroup(pnlFuncionariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(lblNumFun)
-                                                .addComponent(lblNomFun))
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addGroup(pnlFuncionariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(txtNomFun)
-                                                .addComponent(txtCelFun)
-                                                .addComponent(txtNumFun, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
-                        .addGap(73, 73, 73)))
-                .addContainerGap())
+                        .addGroup(pnlFuncionariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblCelFun)
+                            .addComponent(lblNumFun)
+                            .addComponent(lblNomFun)
+                            .addComponent(lblDatosFun))
+                        .addGap(69, 69, 69))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlFuncionariosLayout.createSequentialGroup()
+                        .addComponent(lblAnoIng)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(pnlFuncionariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnAgFun, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtAnoIng, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNumFun, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCelFun, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNomFun, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnModFun))))
+                .addGap(79, 79, 79))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlFuncionariosLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnLimFun, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(306, 306, 306))
         );
         pnlFuncionariosLayout.setVerticalGroup(
             pnlFuncionariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -692,11 +706,11 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(btnAgFun)
-                .addGap(45, 45, 45)
-                .addGroup(pnlFuncionariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnLimFun)
-                    .addComponent(btnModFun))
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnModFun)
+                .addGap(36, 36, 36)
+                .addComponent(btnLimFun)
+                .addContainerGap(64, Short.MAX_VALUE))
         );
 
         panelDatos.addTab("Funcionarios", pnlFuncionarios);
@@ -732,22 +746,22 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
             .addGroup(pnlTarifasLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlTarifasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
                     .addGroup(pnlTarifasLayout.createSequentialGroup()
                         .addGroup(pnlTarifasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 689, Short.MAX_VALUE)
                             .addGroup(pnlTarifasLayout.createSequentialGroup()
-                                .addComponent(lblPorcentaje)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtPorcentaje, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(signo))
-                            .addComponent(lblTarActuales, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlTarifasLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnActualizarTar)
-                .addGap(104, 104, 104))
+                                .addComponent(lblTarActuales, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())
+                    .addGroup(pnlTarifasLayout.createSequentialGroup()
+                        .addComponent(lblPorcentaje)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtPorcentaje, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(signo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnActualizarTar)
+                        .addGap(136, 136, 136))))
         );
         pnlTarifasLayout.setVerticalGroup(
             pnlTarifasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -760,10 +774,9 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
                 .addGroup(pnlTarifasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPorcentaje)
                     .addComponent(txtPorcentaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(signo))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnActualizarTar)
-                .addContainerGap(82, Short.MAX_VALUE))
+                    .addComponent(signo)
+                    .addComponent(btnActualizarTar))
+                .addContainerGap(111, Short.MAX_VALUE))
         );
 
         panelDatos.addTab("Tarifas", pnlTarifas);
@@ -778,26 +791,22 @@ public class VentanaDatos extends javax.swing.JFrame implements Observer {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(panelDatos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 15, Short.MAX_VALUE))
+                .addGap(0, 14, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtCorreoClieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCorreoClieActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtCorreoClieActionPerformed
 
     private void txtCelFunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCelFunActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtCelFunActionPerformed
 
     private void btnAgregarClieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarClieActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_btnAgregarClieActionPerformed
 
     private void lstClientesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstClientesValueChanged
-        // TODO add your handling code here:
     }//GEN-LAST:event_lstClientesValueChanged
 
 
